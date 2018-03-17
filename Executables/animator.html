@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        //uniform vec4 vColor;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        
+        varying vec4 fColor;
+    void main(){
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        //fColor = vColor;
+    }
+</script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    precision highp float;
+
+    precision mediump float;
+    //varying vec4 fColor;
+
+    void main(){
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 5.0);
+    }
+</script>
+
+<script type="text/javascript" src="../Source/webgl-utils.js"></script>
+<script type="text/javascript" src="../Source/initShaders.js"></script>
+<script type="text/javascript" src="../Source/MV.js"></script>
+<script type="text/javascript" src="../Source/w3.js"></script>
+
+</head>
+<body>
+        <div align = "center"> <b> <font color="black" face="verdana" size = "6">Welcome to Animator </font> </b></div>
+        <canvas id="gl-canvas" width="1500" height="600">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    
+    <select id="a">
+        <option value="open_mouth" selected>Open Mouth</option>
+        <option value="close_mouth">Close Mouth</option>
+    </select>
+    
+    
+    <input id="b" type="range" min="-1" max="1">
+    <input id="c" type="range">
+    <input id="d" type="range">
+    <input id="e" type="range">
+    <input id="f" type="range">
+    <input id="g" type="range">
+    <input id="h" type="range">
+    
+</body>
+<script type="text/javascript" src="../Source/animator.js"></script>
+</html>
