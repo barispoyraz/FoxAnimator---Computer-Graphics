@@ -12,6 +12,8 @@ var theta =10;
 
 var movement = 0;
 
+var mouthMovement = 0;
+
 rectangularVertices = 
 [
     vec4( -0.5, -0.5,  0, 1.0 ),
@@ -60,6 +62,7 @@ var modelViewMatrixLoc;
 //HTML Elements
 var mouthMovementOption = document.getElementById("a");
 var choosenOption;
+
 
 var moveBody = document.getElementById("b");
 var moveBodyTo = 0;
@@ -382,6 +385,27 @@ function render()
     tailBody = new limb(m, drawTailBody, tailTip);
     tailTip = new limb(m, drawTailTip, null);
     
+    
+    m = mat4();
+    
+    switch(choosenOption){
+        case 0:
+            if(mouthMovement <= -0.850 )
+                choosenOption = 2;
+            m = mult(m, rotate(mouthMovement, 0, 0, 1));
+            mouthMovement-=0.01;
+            break;
+        case 1:
+            
+            break;
+            
+        case 2:
+            mouthMovement = 0;
+            break;
+    }
+    
+    
+    
     mouth = new limb(m, drawMouth, null);
        
     
@@ -400,10 +424,10 @@ function render()
             movement-=0.1;
             break;
         case 0:
-            if(movement <= -9)
+            /*if(movement <= -9)
                 movement = 10;
             m = mult(m, translate(movement, 0, 0));
-            movement-=0.2;
+            movement-=0.2;*/
             break;
         case 1:
             if(movement <= -9)
@@ -413,10 +437,12 @@ function render()
             break;
     }
     
+    //m  = mat4();
+    //m= rotate(theta, 0,0,1);
     torso = new limb(m, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase, head);
 
     traverseModel(torso);
-    theta +=2;
+    theta +=0.2;
 
     //modelViewMatrix = mat4();
 
