@@ -64,28 +64,32 @@ var mouthMovementOption = document.getElementById("a");
 var choosenOption;
 
 
-var moveBody = document.getElementById("b");
-var moveBodyTo = 0;
+var moveBodyinXaxis = document.getElementById("foxMovementinXaxis");
+var moveBodyToInXaxis = 0;
 
+var moveBodyinYaxis = document.getElementById("foxMovementinYaxis");
 
 //Positions
 var foxPosition = {
     
-    prevPosition: {
-        x: 0.0,
-        y: -0.5,
-        z: 0.0
-    },
+    //prevPosition: {
+    //    x: 0.0,
+    //    y: -0.5,
+    //    z: 0.0
+    //},
     
-    currentPositon: {
+    currentPosition: {
         x: 0.0,
         y: -0.5,
         z: 0.0
     }
 };
 
-var previousSliderValue = 0;
-var difference = 0;
+var previousSliderValueInX = 0;
+var differenceInX = 0;
+
+var previousSliderValueInY = -0.5;
+var differenceInY = 0;
 
 function scale4(a, b, c) {
     var result = mat4();
@@ -322,8 +326,11 @@ window.onload = function init(){
     canvas.width = window.innerWidth;
     gl = WebGLUtils.setupWebGL( canvas );  
     
-    moveBody.min = -24.5;
-    moveBody.max = 21.1;
+    moveBodyinXaxis.min = -24.5;
+    moveBodyinXaxis.max = 21.1;
+    
+    moveBodyinYaxis.min = -9.8;
+    moveBodyinYaxis.max = 10;
        
     if ( !gl ) { alert( "WebGL isn't available" ); 
     }
@@ -440,8 +447,11 @@ function render()
     //m= rotate(theta, 0,0,1);
     
     //Move the fox
-    m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+    m = mult(m, translate(foxPosition.currentPosition.x, foxPosition.currentPosition.y, foxPosition.currentPosition.z));
     //foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+    
+    
+    //m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
             
     
     /*switch(moveBodyTo){
@@ -523,21 +533,32 @@ function mapHTMLElementsToEventListeners(){
         
     });
     
-    //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
-    moveBody.addEventListener("change", function(){
-        moveBodyTo = parseInt(moveBody.value);
+    
+    moveBodyinXaxis.addEventListener("change", function(){
+        moveBodyToInXaxis = parseInt(moveBodyinXaxis.value);
     });
     
 }
 
-function changeAndStorePreviousValue(value){
+//REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+function changeAndStorePreviousValueinXaxis(value){
     //alert("current:" + value);
     //alert("previous:" + previousSliderValue);
     
-    console.log("Value is: " + value);
+    //console.log("Value is: " + value);
     
-    difference = value - previousSliderValue;
-    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-    previousSliderValue = value;
+    differenceInX = value - previousSliderValueInX;
+    foxPosition.currentPosition.x = foxPosition.currentPosition.x + differenceInX;
+    previousSliderValueInX = value;
+}
+
+//REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+function changeAndStorePreviousValueinYaxis(value){
+    console.log("Y value is: " + value);
+    
+    differenceInY = value - previousSliderValueInY;
+    foxPosition.currentPosition.y = foxPosition.currentPosition.y + differenceInY;
+    previousSliderValueInY = value;
+    
 }
 
