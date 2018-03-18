@@ -67,6 +67,26 @@ var choosenOption;
 var moveBody = document.getElementById("b");
 var moveBodyTo = 0;
 
+
+//Positions
+var foxPosition = {
+    
+    prevPosition: {
+        x: 0.0,
+        y: -0.5,
+        z: 0.0
+    },
+    
+    currentPositon: {
+        x: 0.0,
+        y: -0.5,
+        z: 0.0
+    }
+};
+
+var previousSliderValue = 0;
+var difference = 0;
+
 function scale4(a, b, c) {
     var result = mat4();
     result[0][0] = a;
@@ -388,21 +408,21 @@ function render()
     
     m = mat4();
     
-    switch(choosenOption){
+    /*switch(choosenOption){
         case 0:
+            
+            break;
+        case 1:
             if(mouthMovement <= -0.850 )
                 choosenOption = 2;
             m = mult(m, rotate(mouthMovement, 0, 0, 1));
             mouthMovement-=0.01;
             break;
-        case 1:
-            
-            break;
             
         case 2:
             mouthMovement = 0;
             break;
-    }
+    }*/
     
     
     
@@ -416,26 +436,69 @@ function render()
     //m = mult(m, rotate(theta, 0,0,1))
     //m= rotate(theta, 0,0,1);
     
-    switch(moveBodyTo){
+    //Move the fox
+    m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+    //foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            
+    
+    /*switch(moveBodyTo){
+        case -5:
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            break;         
+        case -4:
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            break;         
+        case -3:
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            break;   
+        case -2:
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            break;
         case -1:
-            if(movement <= -9)
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            /*if(movement <= -9)
                 movement = 10;
             m = mult(m, translate(movement, 0, 0));
-            movement-=0.1;
-            break;
-        case 0:
+            movement-=0.1;*/
+            //break;
+        //case 0:
+        //    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+        //    m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
             /*if(movement <= -9)
                 movement = 10;
             m = mult(m, translate(movement, 0, 0));
             movement-=0.2;*/
-            break;
-        case 1:
-            if(movement <= -9)
+         //   break;
+        /*case 1:
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            /*if(movement <= -9)
                 movement = 10;
             m = mult(m, translate(movement, 0, 0));
-            movement-=0.3;
+            movement-=0.3;*/
+            //break;
+        //case 2:
+        /*    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
             break;
-    }
+        case 3:
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            break;   
+        case 4:
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            break;   
+        case 5:   
+            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
+            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+            break;*/
+    //}
     
     //m  = mat4();
     //m= rotate(theta, 0,0,1);
@@ -457,9 +520,19 @@ function mapHTMLElementsToEventListeners(){
         
     });
     
+    //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
     moveBody.addEventListener("change", function(){
         moveBodyTo = parseInt(moveBody.value);
     });
     
+}
+
+function changeAndStorePreviousValue(value){
+    //alert("current:" + value);
+    //alert("previous:" + previousSliderValue);
+    
+    difference = value - previousSliderValue;
+    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
+    previousSliderValue = value;
 }
 
