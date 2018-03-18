@@ -321,6 +321,9 @@ window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
     canvas.width = window.innerWidth;
     gl = WebGLUtils.setupWebGL( canvas );  
+    
+    moveBody.min = -24.5;
+    moveBody.max = 21.1;
        
     if ( !gl ) { alert( "WebGL isn't available" ); 
     }
@@ -530,6 +533,8 @@ function mapHTMLElementsToEventListeners(){
 function changeAndStorePreviousValue(value){
     //alert("current:" + value);
     //alert("previous:" + previousSliderValue);
+    
+    console.log("Value is: " + value);
     
     difference = value - previousSliderValue;
     foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
