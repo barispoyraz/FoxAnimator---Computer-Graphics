@@ -32,7 +32,7 @@
 
 </head>
 <body>
-        <div align = "center"> <b> <font color="black" face="verdana" size = "6">Welcome to Animator </font> </b></div>
+        <div align = "center"> <b> <font color="black" face="verdana" size = "6">The Fox Animator </font> </b></div>
         <canvas id="gl-canvas" width="1500" height="600">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
@@ -43,19 +43,42 @@
     </select>
     
     <br>
-    <br>
-    <br>
     
-    <input id="foxMovementinXaxis" type="range" min="-10" max="10" step="0.1" onchange="changeAndStorePreviousValueinXaxis(this.value)">
-
-    <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" onchange="changeAndStorePreviousValueinYaxis(this.value)">
+    <div style="display: inline-block">
+        <p style="text-align: center">Movement - X axis</p>
+        <input id="foxMovementinXaxis" type="range" min="-10" max="10" step="0.1" onInput="translateX(this.value)">
+    </div>
+    <div style="display: inline-block">
+        <p style="text-align: center">Movement - Y axis</p>
+        <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" onInput="translateY(this.value)">
+    </div>
+    <div style="display: inline-block">
+        <p style="text-align: center">aaa</p>
+        <input id="d" type="range">
+    </div>
     
-    <input id="d" type="range">
-    <input id="e" type="range">
-    <input id="f" type="range">
-    <input id="g" type="range">
-    <input id="h" type="range">
+    <div style="display: inline-block">
+        <p style="text-align: center">bbb</p>
+        <input id="e" type="range">
+    </div>
     
+    <div style="display: inline-block">
+        <p style="text-align: center">ccc</p>
+        <input id="f" type="range">
+    </div>
+    
+    <div style="display: inline-block">
+        <p style="text-align: center">ddd</p>
+        <input id="g" type="range">
+    </div>
+        
+    <div style="display: inline-block">
+        <p style="text-align: center">Tail Base Change</p>
+        <input id="tailBaseChange" type="range" min="-180" max="180" step="0.1" onInput="tailBaseChange(this.value)">
+    </div>   
+        
+        
+        
 </body>
 <script type="text/javascript" src="../Source/animator.js"></script>
 </html>
