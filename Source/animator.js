@@ -80,6 +80,7 @@ var modelViewMatrixLoc;
 //HTML Elements
 var mouthMovementOption = document.getElementById("a");
 var choosenOption;
+var mouthSlider = document.getElementById("mouth_rotation");
 
 
 var moveBodyinXaxis = document.getElementById("foxMovementinXaxis");
@@ -417,6 +418,8 @@ window.onload = function init(){
     //REFERENCE: https://www.w3schools.com/jsreF/prop_range_max.asp
     moveBodyinYaxis.min = -9.8;
     moveBodyinYaxis.max = 10;
+    
+    mouthSlider.max = 0.9;
        
     if ( !gl ) { alert( "WebGL isn't available" ); 
     }
@@ -544,6 +547,50 @@ function mapHTMLElementsToEventListeners(){
         var index = mouthMovementOption.selectedIndex; //0: Open Mouth, 1: Close Mouth
         choosenOption = index;
         
+        //Open Mouth
+        if(choosenOption === 0){
+            var m = mouth.transform;
+            m = mult(m, rotate(-10, 0, 0, 1));
+            
+            mouth.transform = m;
+            
+            console.log("bb");
+        }
+        else{
+            console.log("1111");
+            
+            var m = mouth.transform;
+            while(mouthMovement >= -0.850){
+                console.log("222");
+                m = mult(m, rotate(mouthMovement, 0, 0, 1));
+                mouthMovement-=0.01;
+                mouth.transform = m;
+                //traverseModel(mouth);
+            }
+            
+            
+            /*var m = mouth.transform;
+            m = mult(m, translate(mouth.posX, mouth.posY+0.2, mouth.posZ));
+            
+            mouth.transform = m;
+            console.log("aa");*/
+        }
+        
+        /*var headRotation = head.rotZ - value;
+        head.rotZ = value;
+    
+        var m = head.transform;
+        m = mult(m, translate(head.posX - 2.6, head.posY + 0.1, head.posZ));
+    
+        m = mult(m, rotate(headRotation, 0, 0, 1));
+        m = mult(m, translate(-head.posX + 2.6, -head.posY - 0.1, -head.posZ));
+     
+        head.transform = m;
+    
+        //console.log("VALUE is: " + value);
+    */
+        traverseModel(mouth);
+        
     });
     
     
@@ -596,5 +643,39 @@ function tailBaseChange(value){
     tailBase.transform = m;
 
     traverseModel(tailBase);    
+}
+
+function headRotation(value){
+    var headRotation = head.rotZ - value;
+    head.rotZ = value;
+    
+    var m = head.transform;
+    m = mult(m, translate(head.posX - 2.6, head.posY + 0.1, head.posZ));
+    
+    m = mult(m, rotate(headRotation, 0, 0, 1));
+    m = mult(m, translate(-head.posX + 2.6, -head.posY - 0.1, -head.posZ));
+    
+    head.transform = m;
+    
+    //console.log("VALUE is: " + value);
+    
+    traverseModel(head);
+}
+
+function mouthRotation(value){
+    var mouthRotation = mouth.rotZ - value;
+    mouth.rotZ = value;
+    
+    var m = mouth.transform;
+    m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
+    m = mult(m, rotate(mouthRotation, 0, 0 ,1));
+    
+    m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
+    
+    mouth.transform = m;
+    
+    console.log("Mouth rotation value is: " + value);
+    
+    traverseModel(mouth);
 }
 
