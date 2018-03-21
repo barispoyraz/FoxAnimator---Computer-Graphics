@@ -81,7 +81,9 @@ var modelViewMatrixLoc;
 var mouthMovementOption = document.getElementById("a");
 var choosenOption;
 var mouthSlider = document.getElementById("mouth_rotation");
-
+var changed = false;
+var countUpClose = 0;
+var countUpOpen = 0;
 
 var moveBodyinXaxis = document.getElementById("foxMovementinXaxis");
 var moveBodyToInXaxis = 0;
@@ -520,7 +522,38 @@ var m = mat4();
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT );
-       
+    
+    
+    if(choosenOption === 1 && changed === true){
+        var m = mouth.transform;
+        if(countUpClose <= 0.9){
+            countUpClose += 0.01;
+            m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
+            m = mult(m, rotate(-0.01, 0, 0 ,1));
+            m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
+            mouth.transform = m;
+        }
+        else{
+            changed = false;
+            countUpClose = 0;
+        }
+    }
+    else if(choosenOption === 0 && changed === true){
+        var m = mouth.transform;
+        if(countUpOpen <= 0.9){
+            console.log("aaa111");
+            countUpOpen += 0.01;
+            m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
+            m = mult(m, rotate(0.01, 0, 0 ,1));
+            m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
+            mouth.transform = m;
+        }
+        else{
+            changed = false;
+            countUpOpen = 0;
+        }
+    }
+    
     //Move the fox
     //m = mult(m, translate(foxPosition.currentPosition.x, foxPosition.currentPosition.y, foxPosition.currentPosition.z));
     //foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
@@ -549,15 +582,40 @@ function mapHTMLElementsToEventListeners(){
         
         //Open Mouth
         if(choosenOption === 0){
-            var m = mouth.transform;
-            m = mult(m, rotate(-10, 0, 0, 1));
+            changed = true;
+            //var m = mouth.transform;
+            //m = mult(m, rotate(-10, 0, 0, 1));
             
-            mouth.transform = m;
+            //mouth.transform = m;
             
-            console.log("bb");
+            //console.log("bb");
         }
         else{
-            console.log("1111");
+            changed = true;
+            mouthMovement = 0;
+            //mouthSlider.value = 0;
+            //mouthRotation(0);    
+            
+            //while(mouthSlider.value != 0.9){
+            //    mouthRotation(mouthSlider.value);
+            //    mouthSlider.value = mouthSlider.value + 0.1;
+            //    console.log("aa: "  + mouthSlider.value);
+            //}
+            
+            /*var m = mouth.transform;
+            mouthMovement = 0;
+            while(mouthMovement <= 0.9){
+                console.log("bbbc")
+                m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
+                m = mult(m, rotate(mouthMovement, 0, 0 ,1));
+                m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
+                mouthMovement+=0.01;
+                mouth.transform = m;
+                traverseModel(mouth);
+            }*/
+            
+            
+            /*console.log("1111");
             
             var m = mouth.transform;
             while(mouthMovement >= -0.850){
@@ -565,8 +623,8 @@ function mapHTMLElementsToEventListeners(){
                 m = mult(m, rotate(mouthMovement, 0, 0, 1));
                 mouthMovement-=0.01;
                 mouth.transform = m;
-                //traverseModel(mouth);
-            }
+                //traverseModel(mouth);*/
+            //}
             
             
             /*var m = mouth.transform;
@@ -589,7 +647,7 @@ function mapHTMLElementsToEventListeners(){
     
         //console.log("VALUE is: " + value);
     */
-        traverseModel(mouth);
+        //traverseModel(mouth);
         
     });
     
