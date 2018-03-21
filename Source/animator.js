@@ -4,6 +4,24 @@ ID: 21501207
 CS465 Assignment 2 - Simple Animator
 */
 
+/*BARIŞA NOTLAR:
+Hocam eline sağlık iyi olmuş,
+bir iki değişiklik yaptım düzenli olsun diye
+senin fox objesini kaldırdım yerine limb objesine bir kaç property ekledim,
+hepsini transformValues diye obje verince kendi atıyor içine. Sonrasında kodda yapman gereken limb_adı.rotX = 90
+falan demek o direkt modelin(MVC) açısını 90 yapıyor(aman dikkat model çizdiğimiz fox değil mvc mannerdaaki model)
+pos rot ve sca tutuyor limb artık. Eğer sliderlarla işin olursa tailBase change kısmında yaptığım gibi yap çalışması lazım. 
+Real-time hareket işini çözdük zaten.
+Dikkatli ol eğer limb construct ederken önce transformValues objesi yaratıp onun initial pozisyonlarını, açılarını, oranlarını veriyosun.
+Sonra bu objeyi limbe veriyosun 2. parametre olarak. Zaten init fonksiyonunun içinde limbleri koyduğumuz yerde yaptım örneği var bulabilirsin.
+Fakat orda herşeye 0 verdim. O 0ları düzelt eğer sliderlarda o limble iş yapacaksan.
+NASI DÜZELTİLİR:
+-Draw_limbAdı_ Methodunun decalare edildiği yere git.
+-Orda yaptığımız transformationlara bak.
+-Scaling hariç hepsini posx, posy, poz, rotx, roty, rotz, scax, scay, scaz sıraysıyla transformValues objesine yaz.
+-Eğer slider işi yapmıyorsan zaten bu değerlere ihtiyacın olmamalı.
+*/
+
 var gl;
 var trackMouse = false;
 var program;
@@ -69,21 +87,49 @@ var moveBodyToInXaxis = 0;
 
 var moveBodyinYaxis = document.getElementById("foxMovementinYaxis");
 
+var rotateTailBaseValue = 0;
+
 //Positions
-var foxPosition = {
-    
-    //prevPosition: {
-    //    x: 0.0,
-    //    y: -0.5,
-    //    z: 0.0
-    //},
-    
+/*var foxPosition = { 
     currentPosition: {
         x: 0.0,
         y: -0.5,
         z: 0.0
+    },
+    tail: {
+        //Tail üzerinde deneme
+        tailBasePosition:{
+            initPos:{
+                x: 4,
+                y: 0.7,
+                z: 0.0
+            },
+            x: 4,
+            y: 0.7,
+            z: 0.0
+        },
+        tailBodyPosition:{
+            initPos:{
+                x: 5.4,
+                y: 0.7,
+                z: 0.0
+            },
+            x: 5.4,
+            y: 0.7,
+            z: 0.0
+        },
+        tailTipPosition:{
+            initPos:{
+                x: 10,
+                y: 11,
+                z: 12
+            },
+            x: 7,
+            y: 8,
+            z: 9
+        }
     }
-};
+};*/
 
 var previousSliderValueInX = 0;
 var differenceInX = 0;
@@ -129,13 +175,46 @@ function ellipsoid()
     console.log(pointsArray.length);
 }
 
-function limb(transform, renderMethod, childs)
+function transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez)
+{
+    this.posx = posx;
+    this.posy = posy;
+    this.posz = posz;
+    
+    this.thetax = thetax;
+    this.thetay = thetay;
+    this.thetaz = thetaz;
+
+    this.scalex = scalex;
+    this.scaley = scaley;
+    this.scaleyz = scalez;
+}
+
+/*limb object holds 
+*a transform matrix called transform,
+*a transformValues object for slider control and individual transform values
+*a render/draw method
+*a list of its childen
+*/
+function limb(transform, transformVal, renderMethod, children)
 {  
     this.transform = transform;
+    this.posX = transformVal.posx;
+    this.posY = transformVal.posy;
+    this.posZ = transformVal.posz; 
+
+    this.rotX = transformVal.thetax;
+    this.rotY = transformVal.thetay;
+    this.rotZ = transformVal.thetaz;
+
+    this.scaX = transformVal.scalex;
+    this.scaY = transformVal.scaley;
+    this.scaZ = transformVal.scaleyz;
+
     this.draw = renderMethod;
-    this.childs =[];
-    for (i = 2; i < childs != null && i< arguments.length; i++)
-        this.childs.push(arguments[i]);
+    this.children =[];
+    for (i = 3; i < children != null && i< arguments.length; i++)
+        this.children.push(arguments[i]);
 }
 
 
@@ -147,17 +226,18 @@ function traverseModel(root)
     root.draw();
 
     var i = 0;
-    while (root.childs[i] != null)
+    while (root.children[i] != null)
     {
-        traverseModel(root.childs[i]);
+        traverseModel(root.children[i]);
         i++;
     } 
 
     modelViewMatrix = stack.pop();
 }
 
-//---Render Functions---
+//-------Render Functions--------
 
+//----PRIMITIVES-----
 //---Forms a rectangle---
 function drawrectangle(transform)
 {
@@ -181,14 +261,17 @@ function drawRTriangle(transform)
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 3);
 }
 
+//-----RENDER METHODS FOR BODY PARTS-----
+
 //---Forms the Torso---
 function drawTorso()
 {
     //SIKINTI VARSA BURAYA BAK!
     instanceMatrix = scale4(6, 1.9, 0);
     drawrectangle(instanceMatrix);
-
-    instanceMatrix = scale4(6, 1.9, 0)
+    
+    //console.log(torso.transformVal.y);
+    instanceMatrix = scale4(6, 1.9, 0);
     instanceMatrix = mult(instanceMatrix, translate(0.0, -0.5, 0.0));
     drawEllipsoid(instanceMatrix);
 }
@@ -257,7 +340,8 @@ function drawRearPaws()
 //---Form the Tail Base---
 function drawTailBase()
 {
-    instanceMatrix = translate(4, 0.7, 0.0);  
+    instanceMatrix = translate(4, 0.7, 0);
+    instanceMatrix = mult(instanceMatrix, rotate(rotateTailBaseValue, 0, 0, 1));
     instanceMatrix = mult(instanceMatrix, scale4(3, 0.95, 0));
     drawEllipsoid(instanceMatrix);
 }
@@ -266,7 +350,7 @@ function drawTailBase()
 function drawTailBody()
 {
     instanceMatrix = translate(5.4, 0.7, 0.0);  
-    instanceMatrix = mult(instanceMatrix, scale4(3, 1.10, 0));
+    instanceMatrix = mult(instanceMatrix, scale4(3, 1.10, 0))
     drawEllipsoid(instanceMatrix);
 }
 
@@ -326,9 +410,11 @@ window.onload = function init(){
     canvas.width = window.innerWidth;
     gl = WebGLUtils.setupWebGL( canvas );  
     
+    //REFERENCE: https://www.w3schools.com/jsreF/prop_range_max.asp
     moveBodyinXaxis.min = -24.5;
     moveBodyinXaxis.max = 21.1;
     
+    //REFERENCE: https://www.w3schools.com/jsreF/prop_range_max.asp
     moveBodyinYaxis.min = -9.8;
     moveBodyinYaxis.max = 10;
        
@@ -370,10 +456,57 @@ window.onload = function init(){
     var vPosition = gl.getAttribLocation( program, "vPosition" );
 
     //canvas.addEventListener("mousedown", mouseDown);
+    
+    m = mat4();
+    
+    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    neck = new limb(m, neckT, drawNeck, null);
+    
+    var leftFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    leftFrontPaw = new limb(m, leftFrontPawT, drawFrontPaws, null);
+    var rightFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0);
+    rightFrontPaw = new limb(m, rightFrontPawT, drawFrontPaws, null);
+    
+    var leftFrontLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0);
+    leftFrontLowerLeg = new limb(m, leftFrontLowerLegT, drawFrontLowerLeg, leftFrontPaw);
+    var rightFrontLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    rightFrontLowerLeg = new limb(m, rightFrontLowerLegT, drawFrontLowerLeg, rightFrontPaw);
+    
+    var leftFrontUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    leftFrontUpperLeg = new limb(m, leftFrontUpperLegT, drawFrontUpperLeg, leftFrontLowerLeg);
+    var rightFrontUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    rightFrontUpperLeg = new limb(m, rightFrontUpperLegT, drawFrontUpperLeg, rightFrontLowerLeg);
+    
+    var leftRearPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    leftRearPaw = new limb(m, leftRearPawT, drawRearPaws, null);
+    var rightRearPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    rightRearPaw = new limb(m, rightRearPawT, drawRearPaws, null);
 
-    function mouseDown(){
-            theta+=2;
-    }
+    var leftRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    leftRearLowerLeg = new limb(m, leftRearLowerLegT, drawRearLowerLeg, leftRearPaw);
+    var rightRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    rightRearLowerLeg = new limb(m, rightRearLowerLegT, drawRearLowerLeg, rightRearPaw);
+    
+    var leftRearUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    leftRearUpperLeg = new limb(m, leftRearUpperLegT, drawRearUpperLeg, leftRearLowerLeg);
+    var rightRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    rightRearUpperLeg = new limb(m, rightRearLowerLegT, drawRearUpperLeg, rightRearLowerLeg);
+
+    var tailTipT= new transformValues (0,0,0,0,0,0,1,1,0); 
+    tailTip = new limb(m, tailTipT, drawTailTip, null);
+    var tailBodyT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    tailBody = new limb(m, tailBodyT, drawTailBody, tailTip);
+    var tailBaseT = new transformValues (4,0.7,0,0,0,0,1,1,0); 
+    tailBase = new limb(m, tailBaseT, drawTailBase, tailBody);
+    
+    var mouthT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    mouth = new limb(m, mouthT, drawMouth, null);
+
+    var headT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    head = new limb(m, headT, drawHead, mouth);
+
+    torsoT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    torso = new limb(m, torsoT, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase, head);
     
     mapHTMLElementsToEventListeners();
 
@@ -384,141 +517,21 @@ var m = mat4();
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT );
-
-    m = mat4();
-    neck = new limb(m, drawNeck, null);
-
-    //m = translate(-2.2, -1.4, 0.0);
-    //m= mult(m, rotate(theta, 0,0,1));
-    //m = mult(m, translate(1.9, 1.0, 0.0));
-    leftFrontUpperLeg = new limb(m, drawFrontUpperLeg, leftFrontLowerLeg);
-    //m = mat4();
-    rightFrontUpperLeg = new limb(m, drawFrontUpperLeg, rightFrontLowerLeg);
-    
-    leftFrontLowerLeg = new limb(m, drawFrontLowerLeg, leftFrontPaw);
-    rightFrontLowerLeg = new limb(m, drawFrontLowerLeg, rightFrontPaw);
-
-    leftRearUpperLeg = new limb(m, drawRearUpperLeg, leftRearLowerLeg);
-    rightRearUpperLeg = new limb(m, drawRearUpperLeg, rightRearLowerLeg);
-
-    leftRearLowerLeg = new limb(m, drawRearLowerLeg, leftRearPaw);
-    rightRearLowerLeg = new limb(m, drawRearLowerLeg, rightRearPaw);
-
-    
-    leftFrontPaw = new limb(m, drawFrontPaws, null);
-    rightFrontPaw = new limb(m, drawFrontPaws, null);
-    
-    leftRearPaw = new limb(m, drawRearPaws, null);
-    rightRearPaw = new limb(m, drawRearPaws, null);
-
-    tailBase = new limb(m, drawTailBase, tailBody);
-    tailBody = new limb(m, drawTailBody, tailTip);
-    tailTip = new limb(m, drawTailTip, null);
-    
-    
-    m = mat4();
-    
-    /*switch(choosenOption){
-        case 0:
-            
-            break;
-        case 1:
-            if(mouthMovement <= -0.850 )
-                choosenOption = 2;
-            m = mult(m, rotate(mouthMovement, 0, 0, 1));
-            mouthMovement-=0.01;
-            break;
-            
-        case 2:
-            mouthMovement = 0;
-            break;
-    }*/
-    
-    
-    
-    mouth = new limb(m, drawMouth, null);
        
-    
-    m = mat4();
-    
-    //m= rotate(theta, 0,0,1);
-    head = new limb(m, drawHead, mouth);
-    //m = mult(m, rotate(theta, 0,0,1))
-    //m= rotate(theta, 0,0,1);
-    
     //Move the fox
-    m = mult(m, translate(foxPosition.currentPosition.x, foxPosition.currentPosition.y, foxPosition.currentPosition.z));
+    //m = mult(m, translate(foxPosition.currentPosition.x, foxPosition.currentPosition.y, foxPosition.currentPosition.z));
     //foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
     
     
     //m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
             
     
-    /*switch(moveBodyTo){
-        case -5:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            break;         
-        case -4:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            break;         
-        case -3:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            break;   
-        case -2:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            break;
-        case -1:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            /*if(movement <= -9)
-                movement = 10;
-            m = mult(m, translate(movement, 0, 0));
-            movement-=0.1;*/
-            //break;
-        //case 0:
-        //    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-        //    m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            /*if(movement <= -9)
-                movement = 10;
-            m = mult(m, translate(movement, 0, 0));
-            movement-=0.2;*/
-         //   break;
-        /*case 1:
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            /*if(movement <= -9)
-                movement = 10;
-            m = mult(m, translate(movement, 0, 0));
-            movement-=0.3;*/
-            //break;
-        //case 2:
-        /*    foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            break;
-        case 3:
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            break;   
-        case 4:
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            break;   
-        case 5:   
-            m = mult(m, translate(foxPosition.currentPositon.x, foxPosition.currentPositon.y, foxPosition.currentPositon.z));
-            foxPosition.currentPositon.x = foxPosition.currentPositon.x + difference;
-            break;*/
-    //}
-    
     //m  = mat4();
     //m= rotate(theta, 0,0,1);
-    torso = new limb(m, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase, head);
+    
 
     traverseModel(torso);
-    theta +=0.2;
+    //theta +=0.2;
 
     //modelViewMatrix = mat4();
 
@@ -534,31 +547,54 @@ function mapHTMLElementsToEventListeners(){
     });
     
     
-    moveBodyinXaxis.addEventListener("change", function(){
+    /*moveBodyinXaxis.addEventListener("change", function(){
         moveBodyToInXaxis = parseInt(moveBodyinXaxis.value);
-    });
+    });*/
     
 }
 
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
-function changeAndStorePreviousValueinXaxis(value){
-    //alert("current:" + value);
-    //alert("previous:" + previousSliderValue);
+function translateX(value){
+
+    differenceInX =  torso.posX - value;
+    torso.posX = value;
     
-    //console.log("Value is: " + value);
-    
-    differenceInX = value - previousSliderValueInX;
-    foxPosition.currentPosition.x = foxPosition.currentPosition.x + differenceInX;
-    previousSliderValueInX = value;
+    var m = torso.transform;
+    m = mult(m, translate(-differenceInX,  -differenceInY, torso.posZ));
+
+    torso.transform = m;
+    differenceInX = 0;
+    //traverseModel(torso);
 }
 
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
-function changeAndStorePreviousValueinYaxis(value){
-    console.log("Y value is: " + value);
+function translateY(value){
+    differenceInY =  torso.posY - value;
+    torso.posY = value;
     
-    differenceInY = value - previousSliderValueInY;
-    foxPosition.currentPosition.y = foxPosition.currentPosition.y + differenceInY;
-    previousSliderValueInY = value;
-    
+    var m = torso.transform;
+    m = mult(m, translate(-differenceInX, - differenceInY, torso.posZ));
+
+    torso.transform = m;
+    differenceInY = 0;
+    //traverseModel(torso);
+}
+
+function tailBaseChange(value){
+
+    var rot = (tailBase.rotZ - value); 
+    tailBase.rotZ = (value);
+
+    var m = tailBase.transform;
+    m = mult(m, translate(tailBase.posX - 1,
+            tailBase.posY + 0.1,
+            tailBase.posZ));
+    m = mult(m, rotate(rot, 0,0,1));
+    m = mult(m, translate(-tailBase.posX + 1,
+        -tailBase.posY - 0.1,
+        -tailBase.posZ));
+    tailBase.transform = m;
+
+    traverseModel(tailBase);    
 }
 
