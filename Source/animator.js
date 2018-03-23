@@ -464,9 +464,6 @@ window.onload = function init(){
     
     m = new mat4();
     
-    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    neck = new limb(m, neckT, drawNeck, null);
-    
     var leftFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
     leftFrontPaw = new limb(m, leftFrontPawT, drawFrontPaws, null);
     var rightFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0);
@@ -510,8 +507,11 @@ window.onload = function init(){
     var headT = new transformValues (0,0,0,0,0,0,1,1,0); 
     head = new limb(m, headT, drawHead, mouth);
 
+    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    neck = new limb(m, neckT, drawNeck, head);
+
     torsoT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    torso = new limb(m, torsoT, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase, head);
+    torso = new limb(m, torsoT, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase);
     
     mapHTMLElementsToEventListeners();
 
