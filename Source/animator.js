@@ -523,7 +523,6 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT );
     
-    
     if(choosenOption === 1 && changed === true){
         var m = mouth.transform;
         if(countUpClose <= 0.9){
@@ -737,3 +736,19 @@ function mouthRotation(value){
     traverseModel(mouth);
 }
 
+function legsRotation(value){
+    var legsRotation = leftFrontLowerLeg.rotZ - value;
+    leftFrontLowerLeg.rotZ = value;
+    
+    var m = leftFrontLowerLeg.transform;
+    m = mult(m, translate(leftFrontLowerLeg.posX - 3, leftFrontLowerLeg.posY, leftFrontLowerLeg.posZ));
+    m = mult(m, rotate(mouthRotation, 0, 0 ,1));
+    
+    m = mult(m, translate(leftFrontLowerLeg.posX + 3, leftFrontLowerLeg.posY, leftFrontLowerLeg.posZ));
+    
+    leftFrontLowerLeg.transform = m;
+    
+    console.log("Leg rotation value is: " + value);
+    
+    traverseModel(leftFrontLowerLeg);
+}
