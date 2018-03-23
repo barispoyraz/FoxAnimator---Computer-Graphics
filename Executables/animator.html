@@ -52,9 +52,20 @@
         <p style="text-align: center">Movement - Y axis</p>
         <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" onInput="translateY(this.value)">
     </div>
+
+    <div style="display: inline-block">
+        <p style="text-align: center">Body Rotation</p>
+        <input id="d" type="range" min="-180" max="180" step="0.1" onInput="rotateLimb(torso, 0, 0, this.value)">
+    </div>
+
     <div style="display: inline-block">
         <p style="text-align: center">Head Rotation</p>
         <input id="d" type="range" min="0" max="50" step="0.1" onInput="rotateLimb(head, 2.6, 1.0, this.value)">
+    </div>
+
+    <div style="display: inline-block">
+        <p style="text-align: center">Neck Rotation</p>
+        <input id="d" type="range" min="-70" max="45" step="0.1" onInput="rotateLimb(neck, 2.2, 0.5, this.value)">
     </div>
     
     <div style="display: inline-block">
@@ -64,12 +75,17 @@
     
     <div style="display: inline-block">
         <p style="text-align: center">Upper Leg Rotation</p>
-        <input id="legs_rotation" type="range" min="-180" max="90" step="0.1" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
+        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
     </div>
     
     <div style="display: inline-block">
         <p style="text-align: center">Lower Leg Rotation</p>
         <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
+    </div>
+
+    <div style="display: inline-block">
+        <p style="text-align: center">Paw Rotation</p>
+        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" onInput="rotateLimb(leftFrontPaw, 1.5, -3.4, this.value)">
     </div>
         
     <div style="display: inline-block">
