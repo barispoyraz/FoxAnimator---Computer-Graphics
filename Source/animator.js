@@ -343,7 +343,7 @@ function drawRearPaws()
 //---Form the Tail Base---
 function drawTailBase()
 {
-    instanceMatrix = translate(4, 0.7, 0);
+    instanceMatrix = translate(4.2, 0.7, 0);
     instanceMatrix = mult(instanceMatrix, rotate(rotateTailBaseValue, 0, 0, 1));
     instanceMatrix = mult(instanceMatrix, scale4(3, 0.95, 0));
     drawEllipsoid(instanceMatrix);
@@ -462,7 +462,7 @@ window.onload = function init(){
 
     //canvas.addEventListener("mousedown", mouseDown);
     
-    m = mat4();
+    m = new mat4();
     
     var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
     neck = new limb(m, neckT, drawNeck, null);
@@ -501,7 +501,7 @@ window.onload = function init(){
     tailTip = new limb(m, tailTipT, drawTailTip, null);
     var tailBodyT = new transformValues (0,0,0,0,0,0,1,1,0); 
     tailBody = new limb(m, tailBodyT, drawTailBody, tailTip);
-    var tailBaseT = new transformValues (4,0.7,0,0,0,0,1,1,0); 
+    var tailBaseT = new transformValues (4.2,0.7,0,0,0,0,1,1,0); 
     tailBase = new limb(m, tailBaseT, drawTailBase, tailBody);
     
     var mouthT = new transformValues (0,0,0,0,0,0,1,1,0); 
@@ -657,6 +657,9 @@ function mapHTMLElementsToEventListeners(){
     
 }
 
+
+//---------------------SLIDER ROTATIONS------------------------------
+
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
 function translateX(value){
 
@@ -684,22 +687,22 @@ function translateY(value){
     //traverseModel(torso);
 }
 
-function tailBaseChange(value){
+function rotateLimb(aLimb, offsetX, offsetY, value)
+{
+    var rot = (aLimb.rotZ - value); 
+    aLimb.rotZ = (value);
 
-    var rot = (tailBase.rotZ - value); 
-    tailBase.rotZ = (value);
-
-    var m = tailBase.transform;
-    m = mult(m, translate(tailBase.posX - 1,
-            tailBase.posY + 0.1,
-            tailBase.posZ));
+    var m = aLimb.transform;
+    m = mult(m, translate(aLimb.posX - offsetX,
+            aLimb.posY + offsetY,
+            aLimb.posZ));
     m = mult(m, rotate(rot, 0,0,1));
-    m = mult(m, translate(-tailBase.posX + 1,
-        -tailBase.posY - 0.1,
-        -tailBase.posZ));
-    tailBase.transform = m;
+    m = mult(m, translate(-aLimb.posX + offsetX,
+        -aLimb.posY - offsetY,
+        -aLimb.posZ));
+    aLimb.transform = m;
 
-    traverseModel(tailBase);    
+    traverseModel(aLimb);
 }
 
 function headRotation(value){
@@ -707,48 +710,14 @@ function headRotation(value){
     head.rotZ = value;
     
     var m = head.transform;
-    m = mult(m, translate(head.posX - 2.6, head.posY + 0.1, head.posZ));
+    m = mult(m, translate(head.posX - 2.6, head.posY + 1.0, head.posZ));
     
     m = mult(m, rotate(headRotation, 0, 0, 1));
-    m = mult(m, translate(-head.posX + 2.6, -head.posY - 0.1, -head.posZ));
+    m = mult(m, translate(-head.posX + 2.6, -head.posY - 1.0, -head.posZ));
     
     head.transform = m;
     
     //console.log("VALUE is: " + value);
     
     traverseModel(head);
-}
-
-function mouthRotation(value){
-    var mouthRotation = mouth.rotZ - value;
-    mouth.rotZ = value;
-    
-    var m = mouth.transform;
-    m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
-    m = mult(m, rotate(mouthRotation, 0, 0 ,1));
-    
-    m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
-    
-    mouth.transform = m;
-    
-    console.log("Mouth rotation value is: " + value);
-    
-    traverseModel(mouth);
-}
-
-function legsRotation(value){
-    var legsRotation = leftFrontLowerLeg.rotZ - value;
-    leftFrontLowerLeg.rotZ = value;
-    
-    var m = leftFrontLowerLeg.transform;
-    m = mult(m, translate(leftFrontLowerLeg.posX - 3, leftFrontLowerLeg.posY, leftFrontLowerLeg.posZ));
-    m = mult(m, rotate(mouthRotation, 0, 0 ,1));
-    
-    m = mult(m, translate(leftFrontLowerLeg.posX + 3, leftFrontLowerLeg.posY, leftFrontLowerLeg.posZ));
-    
-    leftFrontLowerLeg.transform = m;
-    
-    console.log("Leg rotation value is: " + value);
-    
-    traverseModel(leftFrontLowerLeg);
 }
