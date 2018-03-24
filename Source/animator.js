@@ -415,7 +415,7 @@ function drawMouth(){
 window.onload = function init(){
     var canvas = document.getElementById( "gl-canvas" );
     canvas.width = window.innerWidth;
-    gl = WebGLUtils.setupWebGL( canvas );  
+    gl = WebGLUtils.setupWebGL( canvas );
     
     //REFERENCE: https://www.w3schools.com/jsreF/prop_range_max.asp
     moveBodyinXaxis.min = -24.5;
@@ -528,7 +528,7 @@ var m = mat4();
 
 function render()
 {
-    gl.clear( gl.COLOR_BUFFER_BIT );
+    //gl.clear( gl.COLOR_BUFFER_BIT );
     
     if(choosenOption === 1 && changed === true){
         var m = mouth.transform;
