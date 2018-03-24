@@ -40,7 +40,9 @@ rectangularVertices =
     vec4( 0.5, -0.5,  0, 1.0 ),
 ];
 
-var head;
+var fox;
+
+var Head;
 var mouth;
 
 var torso;
@@ -226,7 +228,9 @@ function traverseModel(root)
 {
     stack.push(modelViewMatrix);
     modelViewMatrix = mult(modelViewMatrix, root.transform);
-    root.draw();
+
+    if(root.draw!= null)
+        root.draw();
 
     var i = 0;
     while (root.children[i] != null)
@@ -463,6 +467,15 @@ window.onload = function init(){
     //canvas.addEventListener("mousedown", mouseDown);
     
     m = new mat4();
+
+    var mouthT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    mouth = new limb(m, mouthT, drawMouth, null);
+
+    var headT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    Head = new limb(m, headT, drawHead, mouth);
+
+    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    neck = new limb(m, neckT, drawNeck, Head);
     
     var leftFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
     leftFrontPaw = new limb(m, leftFrontPawT, drawFrontPaws, null);
@@ -500,18 +513,12 @@ window.onload = function init(){
     tailBody = new limb(m, tailBodyT, drawTailBody, tailTip);
     var tailBaseT = new transformValues (4.2,0.7,0,0,0,0,1,1,0); 
     tailBase = new limb(m, tailBaseT, drawTailBase, tailBody);
+
+    var torsoT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    torso = new limb(m, torsoT, drawTorso, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, neck, rightRearUpperLeg, tailBase);
     
-    var mouthT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    mouth = new limb(m, mouthT, drawMouth, null);
-
-    var headT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    head = new limb(m, headT, drawHead, mouth);
-
-    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    neck = new limb(m, neckT, drawNeck, head);
-
-    torsoT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    torso = new limb(m, torsoT, drawTorso, neck, leftFrontUpperLeg, leftRearUpperLeg, rightFrontUpperLeg, rightRearUpperLeg, tailBase);
+    foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    fox = new limb(m, foxT, null, torso);
     
     mapHTMLElementsToEventListeners();
 
@@ -565,7 +572,7 @@ function render()
     //m= rotate(theta, 0,0,1);
     
 
-    traverseModel(torso);
+    traverseModel(fox);
     //theta +=0.2;
 
     //modelViewMatrix = mat4();
@@ -663,26 +670,26 @@ function mapHTMLElementsToEventListeners(){
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
 function translateX(value){
 
-    differenceInX =  torso.posX - value;
-    torso.posX = value;
+    differenceInX =  fox.posX - value;
+    fox.posX = value;
     
-    var m = torso.transform;
-    m = mult(m, translate(-differenceInX,  -differenceInY, torso.posZ));
+    var m = fox.transform;
+    m = mult(m, translate(-differenceInX,  -differenceInY, fox.posZ));
 
-    torso.transform = m;
+    fox.transform = m;
     differenceInX = 0;
     //traverseModel(torso);
 }
 
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
 function translateY(value){
-    differenceInY =  torso.posY - value;
-    torso.posY = value;
+    differenceInY =  fox.posY - value;
+    fox.posY = value;
     
-    var m = torso.transform;
-    m = mult(m, translate(-differenceInX, - differenceInY, torso.posZ));
+    var m = fox.transform;
+    m = mult(m, translate(-differenceInX, - differenceInY, fox.posZ));
 
-    torso.transform = m;
+    fox.transform = m;
     differenceInY = 0;
     //traverseModel(torso);
 }
@@ -700,24 +707,6 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
     m = mult(m, translate(-aLimb.posX + offsetX,
         -aLimb.posY - offsetY,
         -aLimb.posZ));
-    aLimb.transform = m;
-
-    traverseModel(aLimb);
-}
-
-function headRotation(value){
-    var headRotation = head.rotZ - value;
-    head.rotZ = value;
-    
-    var m = head.transform;
-    m = mult(m, translate(head.posX - 2.6, head.posY + 1.0, head.posZ));
-    
-    m = mult(m, rotate(headRotation, 0, 0, 1));
-    m = mult(m, translate(-head.posX + 2.6, -head.posY - 1.0, -head.posZ));
-    
-    head.transform = m;
-    
-    //console.log("VALUE is: " + value);
-    
-    traverseModel(head);
+    aLimb.transform = m;    
+    //traverseModel(aLimb);
 }
