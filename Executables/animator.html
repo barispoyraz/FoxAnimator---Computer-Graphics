@@ -3,7 +3,7 @@
 <head>
     <script id="vertex-shader" type="x-shader/x-vertex">
         attribute vec4 vPosition;
-        //uniform vec4 vColor;
+        attribute vec4 vColor;
 
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
@@ -11,17 +11,17 @@
         varying vec4 fColor;
     void main(){
         gl_Position = projectionMatrix * modelViewMatrix * vPosition;
-        //fColor = vColor;
+        fColor = vColor;
     }
 </script>
     <script id="fragment-shader" type="x-shader/x-fragment">
     precision highp float;
 
     precision mediump float;
-    //varying vec4 fColor;
+    varying vec4 fColor;
 
     void main(){
-        gl_FragColor = vec4(1.0, 0.5, 0.3, 1.0);
+        gl_FragColor = fColor;
     }
 </script>
 
@@ -29,6 +29,15 @@
 <script type="text/javascript" src="../Source/initShaders.js"></script>
 <script type="text/javascript" src="../Source/MV.js"></script>
 <script type="text/javascript" src="../Source/w3.js"></script>
+    
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -46,15 +55,21 @@
     
     <br>
     
+    <!---Reference: https://www.w3schools.com/howto/howto_js_accordion.asp !-->
     <div style="display: inline-block">
-        <p style="text-align: center">Movement - X axis</p>
-        <input id="foxMovementinXaxis" type="range" min="-10" max="10" step="0.1" onInput="translateX(this.value)">
+    <button class="accordion">Movement</button>
+    <div class="panel" style="display: none">
+        <div style="display: inline-block">
+            <p style="text-align: center">Movement - X axis</p>
+            <input id="foxMovementinXaxis" type="range" min="-10" max="10" step="0.1" onInput="translateX(this.value)">
+        </div>
+        <div style="display: inline-block">
+            <p style="text-align: center">Movement - Y axis</p>
+            <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" onInput="translateY(this.value)">
+        </div>
     </div>
-    <div style="display: inline-block">
-        <p style="text-align: center">Movement - Y axis</p>
-        <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" onInput="translateY(this.value)">
-    </div>
-
+    
+    
     <div style="display: inline-block">
         <p style="text-align: center">Body Rotation</p>
         <input id="d" type="range" min="-180" max="180" step="0.1" onInput="rotateLimb(torso, 0, 0, this.value)">
@@ -75,36 +90,58 @@
         <input id="mouth_rotation" type="range" min="-10" max="10" step="0.1" onInput="rotateLimb(mouth, 3.3, 1.2, this.value)">
     </div>
     
-    <div style="display: inline-block">
-        <p style="text-align: center">Upper Leg Rotation</p>
-        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
-    </div>
-    
-    <div style="display: inline-block">
-        <p style="text-align: center">Lower Leg Rotation</p>
-        <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
+    <button class="accordion">Legs</button>
+    <div class="panel" style="display: none">
+        <div style="display: inline-block">
+            <p style="text-align: center">Upper Leg Rotation</p>
+            <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
+        </div>
+        <div style="display: inline-block">
+            <p style="text-align: center">Lower Leg Rotation</p>
+            <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
+        </div>
     </div>
 
     <div style="display: inline-block">
         <p style="text-align: center">Paw Rotation</p>
         <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" onInput="rotateLimb(leftFrontPaw, 1.5, -3.4, this.value)">
     </div>
-        
-    <div style="display: inline-block">
-        <p style="text-align: center">Tail Base Change</p>
-        <input id="tailBaseChange" type="range" min="-90" max="75" step="0.1" onInput="rotateLimb(tailBase, 1.2, 0.0, this.value)">
-    </div>
     
-    <div style="display: inline-block">
-        <p style="text-align: center">Tail Body Change</p>
-        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" onInput="rotateLimb(tailBody, -4.3, 0.8, this.value)">
+    <button class="accordion">Tail</button>
+    <div class="panel" style="display: none">
+        <div style="display: inline-block">
+            <p style="text-align: center">Tail Base Change</p>
+            <input id="tailBaseChange" type="range" min="-90" max="75" step="0.1" onInput="rotateLimb(tailBase, 1.2, 0.0, this.value)">
+        </div>
+        <div style="display: inline-block">
+            <p style="text-align: center">Tail Body Change</p>
+            <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" onInput="rotateLimb(tailBody, -4.3, 0.8, this.value)">
+        </div>
+        <div style="display: inline-block">
+            <p style="text-align: center">Tail Tip Change</p>
+            <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" onInput="rotateLimb(tailTip, -5.6, 0.8, this.value)">
+        </div>  
     </div>
-    
-    <div style="display: inline-block">
-        <p style="text-align: center">Tail Tip Change</p>
-        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" onInput="rotateLimb(tailTip, -5.6, 0.8, this.value)">
-    </div>  
+        </div>
         
+    <script>
+        var accordion = document.getElementsByClassName("accordion");
+        var i;
+                 
+        for(i = 0; i < accordion.length; i++){
+            accordion[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block"){
+                panel.style.display = "none";
+            } 
+            else{
+                panel.style.display = "block";
+            }
+            });
+        }
+    
+    </script>
         
         
 </body>

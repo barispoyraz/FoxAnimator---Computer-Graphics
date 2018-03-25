@@ -94,6 +94,14 @@ var moveBodyinYaxis = document.getElementById("foxMovementinYaxis");
 
 var rotateTailBaseValue = 0;
 
+var colorsArray = [];
+
+var headColors = [];
+var headPoints = [];
+
+var tailBaseColors = [];
+var tailBasePoints = [];
+
 //Positions
 /*var foxPosition = { 
     currentPosition: {
@@ -157,11 +165,13 @@ function scale4(a, b, c) {
     pointsArray.push(rectangularVertices[d]);    
 }
 
-function ellipsoid()
+function ellipsoid(type)
 {
-    var v2 = new vec4(0,0,0,1);
-    circularVertices.push(v2);
-    circularVertices.push(v2);
+    
+    circularVertices = [];
+    //var v2 = new vec4(0,0,0,1);
+    //circularVertices.push(v2);
+    //circularVertices.push(v2);
     for (i = 0; i < 360 ; i++)
     {
         var j = i * Math.PI/180;
@@ -175,8 +185,17 @@ function ellipsoid()
 
     }
     console.log(  circularVertices.length )
-    for(i = circularVertices.length-1; i >= 0; i--)
-        pointsArray.push(circularVertices[i]);
+    
+    switch(type){
+        case "Head":
+            for(i = circularVertices.length-1; i >= 0; i--)
+                headPoints.push(circularVertices[i]);
+            break;
+        case "TailBase":
+            for(i = circularVertices.length-1; i>= 0; i--)
+                tailBasePoints.push(circularVertices[i]);
+    }
+    
     console.log(pointsArray.length);
 }
 
@@ -222,8 +241,6 @@ function limb(transform, transformVal, renderMethod, children)
         this.children.push(arguments[i]);
 }
 
-
-
 function traverseModel(root)
 {
     stack.push(modelViewMatrix);
@@ -254,11 +271,26 @@ function drawrectangle(transform)
 }
 
 //---Forms a ellipsoid---
-function drawEllipsoid(transform)
+function drawEllipsoid(transform, type)
 {
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
-    gl.drawArrays( gl.TRIANGLE_FAN, 4, pointsArray.length-5);
+    
+    switch(type){
+        case "Head":
+            gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+            //gl.bufferData( gl.ARRAY_BUFFER, flatten(headColors), gl.STATIC_DRAW );
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(headColors));
+            gl.drawArrays( gl.TRIANGLE_FAN, 0, headPoints.length);
+            break;
+        case "TailBase":
+            gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+            //gl.bufferData( gl.ARRAY_BUFFER, flatten(tailBaseColors), gl.STATIC_DRAW );
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(tailBaseColors));
+            gl.drawArrays( gl.TRIANGLE_FAN, 0, tailBasePoints.length);
+            break;
+    }
+    
 }
 //---Forms a right triangle ---
 function drawRTriangle(transform)
@@ -350,7 +382,7 @@ function drawTailBase()
     instanceMatrix = translate(4.2, 0.7, 0);
     instanceMatrix = mult(instanceMatrix, rotate(rotateTailBaseValue, 0, 0, 1));
     instanceMatrix = mult(instanceMatrix, scale4(3, 0.95, 0));
-    drawEllipsoid(instanceMatrix);
+    drawEllipsoid(instanceMatrix, "TailBase");
 }
 
 //---Form the Tail Body---
@@ -380,7 +412,7 @@ function drawHead()
 {
     instanceMatrix = translate(-3.5, 1.9, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(2.7, 2.2, 0) );
-    drawEllipsoid(instanceMatrix);
+    drawEllipsoid(instanceMatrix, "Head");
 
     instanceMatrix = translate(-4.7, 1.4, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(15, 0,0,1));
@@ -447,24 +479,9 @@ window.onload = function init(){
     gl.uniformMatrix4fv(gl.getUniformLocation( program, "modelViewMatrix"), false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( gl.getUniformLocation( program, "projectionMatrix"), false, flatten(projectionMatrix) );
 
-    modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix")
+    modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
-    quad(0,1,2,3);
-    ellipsoid();
-
-    vBuffer = gl.createBuffer();
-        
-    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );    
-
-    //look up for Attributes        
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-
-    //canvas.addEventListener("mousedown", mouseDown);
+    initializeColors();
     
     m = new mat4();
 
@@ -519,6 +536,33 @@ window.onload = function init(){
     
     foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
     fox = new limb(m, foxT, null, torso);
+    
+    cBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(headColors), gl.STATIC_DRAW );
+
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
+    
+    quad(0,1,2,3);
+    ellipsoid("Head");
+    ellipsoid("TailBase");
+    
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(tailBaseColors));
+    
+    vBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(headPoints), gl.STATIC_DRAW);
+    
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );    
+
+    //look up for Attributes        
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    
+    //canvas.addEventListener("mousedown", mouseDown);
     
     mapHTMLElementsToEventListeners();
 
@@ -709,4 +753,18 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
         -aLimb.posZ));
     aLimb.transform = m;    
     //traverseModel(aLimb);
+}
+
+function initializeColors(){
+    for(i = 0; i < 120; i++)
+        headColors.push(vec4(1.0, 0.0, 0.0, 1.0));
+    
+    for(i = 0; i < 240; i++)
+        headColors.push(vec4(0.0, 1.0, 0.0, 1.0));
+    
+    for(i = 0; i < 120; i++)
+        tailBaseColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+    
+    for(i = 0; i < 240; i++)
+        tailBaseColors.push(vec4(1.0, 1.0, 1.0, 1.0));
 }
