@@ -96,11 +96,37 @@ var rotateTailBaseValue = 0;
 
 var colorsArray = [];
 
-var headColors = [];
-var headPoints = [];
+var headColors = [];    //-
+var noseColors = [];
+var noseTipColors = [];
+var leftEarColors = [];
+var rightEarColors = [];
 
-var tailBaseColors = [];
-var tailBasePoints = [];
+var mouthColors = [];
+
+var torsoLowerPoints = []; //-
+var torsoLowerColors = []; //-
+
+var torsoUpperPoints = []; //-
+var torsoUpperColors = []; //-
+
+var neckPoints = []; //-
+var neckColors = []; //-
+
+var frontUpperLegColors = [];
+var rearUpperLegColors = [];
+
+var frontLowerLegColors = [];
+var rearLowerLegColors = [];
+
+var frontPawColors = []; //-
+var rearPawColors = []; //-
+
+var tailBaseColors = []; //-
+var tailBodyColors = []; //-
+var tailTipColors = []; //-
+var tailTipTipColors = [];
+
 
 //Positions
 /*var foxPosition = { 
@@ -159,19 +185,23 @@ function scale4(a, b, c) {
  }
 
  function quad(a, b, c, d) {
-    pointsArray.push(rectangularVertices[a]); 
-    pointsArray.push(rectangularVertices[b]); 
-    pointsArray.push(rectangularVertices[c]);     
-    pointsArray.push(rectangularVertices[d]);    
+
+     pointsArray.push(rectangularVertices[a]); 
+     pointsArray.push(rectangularVertices[b]); 
+     pointsArray.push(rectangularVertices[c]); 
+     pointsArray.push(rectangularVertices[d]);
+       
 }
 
-function ellipsoid(type)
+function ellipsoid()
 {
     
-    circularVertices = [];
-    //var v2 = new vec4(0,0,0,1);
+    //circularVertices = [];
+    var v2 = new vec4(0,0,0,1);
     //circularVertices.push(v2);
-    //circularVertices.push(v2);
+    circularVertices.push(v2);
+
+    
     for (i = 0; i < 360 ; i++)
     {
         var j = i * Math.PI/180;
@@ -186,14 +216,8 @@ function ellipsoid(type)
     }
     console.log(  circularVertices.length )
     
-    switch(type){
-        case "Head":
-            for(i = circularVertices.length-1; i >= 0; i--)
-                headPoints.push(circularVertices[i]);
-            break;
-        case "TailBase":
-            for(i = circularVertices.length-1; i>= 0; i--)
-                tailBasePoints.push(circularVertices[i]);
+    for(i = circularVertices.length-1; i >= 0; i--){
+        pointsArray.push(circularVertices[i]);
     }
     
     console.log(pointsArray.length);
@@ -263,40 +287,36 @@ function traverseModel(root)
 
 //----PRIMITIVES-----
 //---Forms a rectangle---
-function drawrectangle(transform)
+function drawrectangle(transform, colors)
 {
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 4);
 }
 
 //---Forms a ellipsoid---
-function drawEllipsoid(transform, type)
+function drawEllipsoid(transform, colors)
 {
+    //BURAYA BAK
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
-    
-    switch(type){
-        case "Head":
-            gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-            //gl.bufferData( gl.ARRAY_BUFFER, flatten(headColors), gl.STATIC_DRAW );
-            gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(headColors));
-            gl.drawArrays( gl.TRIANGLE_FAN, 0, headPoints.length);
-            break;
-        case "TailBase":
-            gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-            //gl.bufferData( gl.ARRAY_BUFFER, flatten(tailBaseColors), gl.STATIC_DRAW );
-            gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(tailBaseColors));
-            gl.drawArrays( gl.TRIANGLE_FAN, 0, tailBasePoints.length);
-            break;
-    }
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
+    gl.drawArrays( gl.TRIANGLE_FAN, 4, 356); 
     
 }
 //---Forms a right triangle ---
-function drawRTriangle(transform)
+function drawRTriangle(transform, colors)
 {
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 3);
 }
 
@@ -307,12 +327,12 @@ function drawTorso()
 {
     //SIKINTI VARSA BURAYA BAK!
     instanceMatrix = scale4(6, 1.9, 0);
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, torsoUpperColors);
     
     //console.log(torso.transformVal.y);
     instanceMatrix = scale4(6, 1.9, 0);
     instanceMatrix = mult(instanceMatrix, translate(0.0, -0.5, 0.0));
-    drawEllipsoid(instanceMatrix);
+    drawEllipsoid(instanceMatrix, torsoLowerColors);
 }
 
 //---Forms the Neck---
@@ -321,7 +341,7 @@ function drawNeck()
     instanceMatrix = translate(-2.6, 1.0, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(16, 0,0,1))
     instanceMatrix = mult(instanceMatrix, scale4(1.4, 2.3, 0) );
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, neckColors);
 }
 
 //---Forms the Front Upper Legs---
@@ -330,7 +350,7 @@ function drawFrontUpperLeg()
     instanceMatrix = translate(-2.2, -1.4, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(50, 0,0,1))
     instanceMatrix = mult(instanceMatrix, scale4(0.6, 1.7, 0) );
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, frontUpperLegColors);
 }
 
 //---Forms the Rear Upper Legs---
@@ -339,7 +359,7 @@ function drawRearUpperLeg()
     instanceMatrix = translate(2.3, -1.6, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(20, 0,0,1))
     instanceMatrix = mult(instanceMatrix, scale4(-1.7, 2.7, 0) );
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, rearUpperLegColors);
 }
 
 //---Form the Front Lower Legs---
@@ -347,7 +367,7 @@ function drawFrontLowerLeg()
 {
     instanceMatrix = translate(-1.6, -2.6, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(0.5, 1.8, 0) );
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, frontLowerLegColors);
 }
 
 //---Form the Rear Lower Legs---
@@ -355,7 +375,7 @@ function drawRearLowerLeg()
 {
     instanceMatrix = translate(3.4, -3.0, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(0.4, 1.6, 0) );
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, rearLowerLegColors);
 }
 
 //---Form the Front Paws---
@@ -364,7 +384,7 @@ function drawFrontPaws()
     instanceMatrix = translate(-2.0, -3.5, 0.0);     
     instanceMatrix = mult(instanceMatrix, rotate(90, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(0.5, -1.3, 0) );
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, frontPawColors);
 }
 
 //---Form the Rear Paws---
@@ -373,7 +393,7 @@ function drawRearPaws()
     instanceMatrix = translate(2.95, -3.7, 0.0);  
     instanceMatrix = mult(instanceMatrix, rotate(90, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(0.5, -1.3, 0) );
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, rearPawColors);
 }
 
 //---Form the Tail Base---
@@ -382,7 +402,7 @@ function drawTailBase()
     instanceMatrix = translate(4.2, 0.7, 0);
     instanceMatrix = mult(instanceMatrix, rotate(rotateTailBaseValue, 0, 0, 1));
     instanceMatrix = mult(instanceMatrix, scale4(3, 0.95, 0));
-    drawEllipsoid(instanceMatrix, "TailBase");
+    drawEllipsoid(instanceMatrix, tailBaseColors);
 }
 
 //---Form the Tail Body---
@@ -390,7 +410,7 @@ function drawTailBody()
 {
     instanceMatrix = translate(5.4, 0.7, 0.0);  
     instanceMatrix = mult(instanceMatrix, scale4(3, 1.10, 0))
-    drawEllipsoid(instanceMatrix);
+    drawEllipsoid(instanceMatrix, tailBodyColors);
 }
 
 //---Form the Tail Tip---
@@ -398,13 +418,13 @@ function drawTailTip()
 {
     instanceMatrix = translate(7, 0.7, 0.0);  
     instanceMatrix = mult(instanceMatrix, scale4(3, 1.15, 0));
-    drawEllipsoid(instanceMatrix);
+    drawEllipsoid(instanceMatrix, tailTipColors);
 
     instanceMatrix = translate(8.0, 0.7, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(2.0, 0.8, 0.0));
     instanceMatrix = mult(instanceMatrix, rotate(225, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(0.8, 0.8, 0.0));
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, tailTipTipColors);
 }
 
 //---Form the Head---
@@ -412,27 +432,27 @@ function drawHead()
 {
     instanceMatrix = translate(-3.5, 1.9, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(2.7, 2.2, 0) );
-    drawEllipsoid(instanceMatrix, "Head");
+    drawEllipsoid(instanceMatrix, headColors);
 
     instanceMatrix = translate(-4.7, 1.4, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(15, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(1.2, 0.7, 0.0));
-    drawrectangle(instanceMatrix);
+    drawrectangle(instanceMatrix, noseColors);
 
     instanceMatrix = translate(-5.46, 1.19, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(15, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(-0.4, 0.7, 0.0));
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, noseTipColors);
 
     instanceMatrix = translate(-3.1, 3.2, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(0, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(1.2, -1.2, 0.0));
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, rightEarColors);
 
     instanceMatrix = translate(-3.4, 3.2, 0.0);
     instanceMatrix = mult(instanceMatrix, rotate(0, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(1.2, -1.2, 0.0));
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, leftEarColors);
 
 }
 
@@ -441,7 +461,7 @@ function drawMouth(){
     instanceMatrix = translate(-4.4, 1.07, 0.0);  
     instanceMatrix = mult(instanceMatrix, rotate(88, 0,0,1));
     instanceMatrix = mult(instanceMatrix, scale4(0.5, -1.5, 0));
-    drawRTriangle(instanceMatrix);
+    drawRTriangle(instanceMatrix, mouthColors);
 }
 
 window.onload = function init(){
@@ -482,6 +502,36 @@ window.onload = function init(){
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
     initializeColors();
+    
+    
+    
+    cBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    //gl.bufferData( gl.ARRAY_BUFFER, flatten(noseColors), gl.STATIC_DRAW );
+
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
+    
+    
+    quad(0,1,2,3);
+    ellipsoid();
+
+    
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(tailBaseColors));
+    
+    vBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
+    
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );    
+
+    //look up for Attributes        
+    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    
+    //canvas.addEventListener("mousedown", mouseDown);
     
     m = new mat4();
 
@@ -536,33 +586,6 @@ window.onload = function init(){
     
     foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
     fox = new limb(m, foxT, null, torso);
-    
-    cBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(headColors), gl.STATIC_DRAW );
-
-    var vColor = gl.getAttribLocation( program, "vColor" );
-    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vColor );
-    
-    quad(0,1,2,3);
-    ellipsoid("Head");
-    ellipsoid("TailBase");
-    
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(tailBaseColors));
-    
-    vBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(headPoints), gl.STATIC_DRAW);
-    
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );    
-
-    //look up for Attributes        
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
-    
-    //canvas.addEventListener("mousedown", mouseDown);
     
     mapHTMLElementsToEventListeners();
 
@@ -756,15 +779,62 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
 }
 
 function initializeColors(){
-    for(i = 0; i < 120; i++)
+    
+    for(i = 0; i < 360; i++)
         headColors.push(vec4(1.0, 0.0, 0.0, 1.0));
     
-    for(i = 0; i < 240; i++)
-        headColors.push(vec4(0.0, 1.0, 0.0, 1.0));
+    for(i = 0; i < 4; i++)
+        noseColors.push(vec4(0.4, 0.4, 1.0, 1.0));
     
-    for(i = 0; i < 120; i++)
-        tailBaseColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+    for(i = 0; i < 4; i++)
+        noseTipColors.push(vec4(1.0, 0.50, 0.10, 1.0));
     
-    for(i = 0; i < 240; i++)
-        tailBaseColors.push(vec4(1.0, 1.0, 1.0, 1.0));
+    for(i = 0; i < 4; i++)
+        leftEarColors.push(vec4(0.2, 0.50, 0.10, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        rightEarColors.push(vec4(0.8, 0.50, 0.10, 1.0));
+
+    for(i = 0; i < 360; i++)
+        tailBaseColors.push(vec4(0.0, 1.0, 0.0, 1.0));
+    
+    for(i = 0; i < 3; i++)
+        mouthColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+    
+    for(i = 0; i < 360; i++)
+        torsoLowerColors.push(vec4(1.0, 1.0, 1.0, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        torsoUpperColors.push(vec4(1.0, 0.25, 1.0, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        neckColors.push(vec4(1.0, 1.0, 0.0, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        frontUpperLegColors.push(vec4(0.0, 0.4, 0.6, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        rearUpperLegColors.push(vec4(0.0, 0.6, 0.4, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        frontLowerLegColors.push(vec4(1.0, 1.0, 0.6, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        rearLowerLegColors.push(vec4(1.0, 0.2, 0.4, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        frontPawColors.push(vec4(1.0, 0.6, 0.4, 1.0));
+    
+    for(i = 0; i < 4; i++)
+        rearPawColors.push(vec4(1.0, 1.0, 0.50, 1.0));
+    
+    for(i = 0; i < 360; i++)
+        tailBodyColors.push(vec4(0.50, 0.75, 1.0, 1.0));
+    
+    for(i = 0; i < 360; i++)
+        tailTipColors.push(vec4(0.10, 0.20, 1.0, 1.0));
+    
+    for(i = 0; i < 360; i++)
+        tailTipTipColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+    
 }
