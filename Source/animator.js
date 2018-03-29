@@ -202,11 +202,11 @@ function ellipsoid()
     circularVertices.push(v2);
 
     
-    for (i = 0; i < 360 ; i++)
+    for (i = 0; i <= 360 ; i+= 360/357)
     {
         var j = i * Math.PI/180;
 
-        var v1 = new vec4 (0.5*Math.sin(j), 0.5*Math.cos(j),1,1);
+        var v1 = new vec4 (0.5*Math.sin(j), 0.5*Math.cos(j),0,1);
 
         //var v2 = new vec4(0,0,0,0);
 
@@ -216,11 +216,11 @@ function ellipsoid()
     }
     console.log(  circularVertices.length )
     
-    for(i = circularVertices.length-1; i >= 0; i--){
-        pointsArray.push(circularVertices[i]);
+    for(k = circularVertices.length-1; k >= 0; k--){
+        pointsArray.push(circularVertices[k]);
     }
     
-    console.log(pointsArray.length);
+    console.log(circularVertices.length);
 }
 
 function transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez)
@@ -779,62 +779,89 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
 }
 
 function initializeColors(){
+
+    var r = 0;
+    var g = 0;
+    var b = 0;
     
-    for(i = 0; i < 360; i++)
-        headColors.push(vec4(1.0, 0.0, 0.0, 1.0));
+    for(i = 0; i < 180; i++)
+    {
+        headColors.push(vec4(0.6, 0.29, 0.1, 1.0));
+    }
+    for(i = 0; i < 100; i++)
+    {
+        headColors.push(vec4(0.6+ i*0.01, 0.29 + i*0.01, 0.1-0.03/100*i, 1.0));
+    }
+
+    for(i = 0; i < 80; i++)
+    {
+        headColors.push(vec4(0.8, 0.37 ,0.07, 1.0));
+    }
     
-    for(i = 0; i < 4; i++)
-        noseColors.push(vec4(0.4, 0.4, 1.0, 1.0));
+    //for(i = 0; i < 4; i++)
+        noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+        noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+        noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+        noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
     
-    for(i = 0; i < 4; i++)
-        noseTipColors.push(vec4(1.0, 0.50, 0.10, 1.0));
+    //for(i = 0; i < 4; i++)
+        noseTipColors.push(vec4(0.6, 0.6, 0.6, 1.0));
+        noseTipColors.push(vec4(0.6, 0.6, 0.6, 1.0));
+        noseTipColors.push(vec4(0.0, 0.0, 0.0, 1.0));
     
-    for(i = 0; i < 4; i++)
-        leftEarColors.push(vec4(0.2, 0.50, 0.10, 1.0));
+    //for(i = 0; i < 4; i++)
+        leftEarColors.push(vec4(0.7, 0.58, 0.4, 1.0));
+        leftEarColors.push(vec4(0.7, 0.39, 0.1, 1.0));
+        leftEarColors.push(vec4(0.6, 0.29, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        rightEarColors.push(vec4(0.8, 0.50, 0.10, 1.0));
+    //for(i = 0; i < 4; i++)
+        rightEarColors.push(vec4(0.64, 0.52, 0.36, 1.0));
+        rightEarColors.push(vec4(0.64, 0.35, 0.04, 1.0));
+        rightEarColors.push(vec4(0.54, 0.25, 0.03, 1.0));
 
     for(i = 0; i < 360; i++)
-        tailBaseColors.push(vec4(0.0, 1.0, 0.0, 1.0));
+        tailBaseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 3; i++)
-        mouthColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+        mouthColors.push(vec4(0.8 - i*0.1, 0.78 - i*0.1, 0.76 - i*0.1, 1.0));
     
     for(i = 0; i < 360; i++)
-        torsoLowerColors.push(vec4(1.0, 1.0, 1.0, 1.0));
+        torsoLowerColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        torsoUpperColors.push(vec4(1.0, 0.25, 1.0, 1.0));
+        torsoUpperColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        neckColors.push(vec4(1.0, 1.0, 0.0, 1.0));
+        neckColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        frontUpperLegColors.push(vec4(0.0, 0.4, 0.6, 1.0));
+        frontUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        rearUpperLegColors.push(vec4(0.0, 0.6, 0.4, 1.0));
+        rearUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        frontLowerLegColors.push(vec4(1.0, 1.0, 0.6, 1.0));
+        frontLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        rearLowerLegColors.push(vec4(1.0, 0.2, 0.4, 1.0));
+        rearLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        frontPawColors.push(vec4(1.0, 0.6, 0.4, 1.0));
+        frontPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
-        rearPawColors.push(vec4(1.0, 1.0, 0.50, 1.0));
+        rearPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 360; i++)
-        tailBodyColors.push(vec4(0.50, 0.75, 1.0, 1.0));
+        tailBodyColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 360; i++)
-        tailTipColors.push(vec4(0.10, 0.20, 1.0, 1.0));
+        tailTipColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 360; i++)
-        tailTipTipColors.push(vec4(0.0, 0.0, 1.0, 1.0));
+    //for(i = 0; i < 4; i++)
+        tailTipTipColors.push(vec4(0.75, 0.42, 0.12, 1.0));
+        tailTipTipColors.push(vec4(0.85, 0.7, 0.7, 1.0));
+        tailTipTipColors.push(vec4(0.75, 0.42, 0.12, 1.0));
+        
     
 }
