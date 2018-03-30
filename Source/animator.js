@@ -127,49 +127,6 @@ var tailBodyColors = []; //-
 var tailTipColors = []; //-
 var tailTipTipColors = [];
 
-
-//Positions
-/*var foxPosition = { 
-    currentPosition: {
-        x: 0.0,
-        y: -0.5,
-        z: 0.0
-    },
-    tail: {
-        //Tail üzerinde deneme
-        tailBasePosition:{
-            initPos:{
-                x: 4,
-                y: 0.7,
-                z: 0.0
-            },
-            x: 4,
-            y: 0.7,
-            z: 0.0
-        },
-        tailBodyPosition:{
-            initPos:{
-                x: 5.4,
-                y: 0.7,
-                z: 0.0
-            },
-            x: 5.4,
-            y: 0.7,
-            z: 0.0
-        },
-        tailTipPosition:{
-            initPos:{
-                x: 10,
-                y: 11,
-                z: 12
-            },
-            x: 7,
-            y: 8,
-            z: 9
-        }
-    }
-};*/
-
 var previousSliderValueInX = 0;
 var differenceInX = 0;
 
@@ -195,28 +152,21 @@ function scale4(a, b, c) {
 
 function ellipsoid()
 {
-    
-    //circularVertices = [];
     var v2 = new vec4(0,0,0,1);
-    //circularVertices.push(v2);
     circularVertices.push(v2);
 
-    
-    for (i = 0; i <= 360 ; i+= 360/357)
+    for (i = 0; i <= 36 ; i+= 1)
     {
-        var j = i * Math.PI/180;
+        var j = i * 10 * Math.PI/180;
 
-        var v1 = new vec4 (0.5*Math.sin(j), 0.5*Math.cos(j),0,1);
-
-        //var v2 = new vec4(0,0,0,0);
+        var v1 = new vec4 (0.5 * Math.sin(j), 0.5 * Math.cos(j), 0, 1);
 
         circularVertices.push(v1);
-        //circularVertices.push(v2);
 
     }
     console.log(  circularVertices.length )
     
-    for(k = circularVertices.length-1; k >= 0; k--){
+    for(k = 0; k < circularVertices.length; k++){
         pointsArray.push(circularVertices[k]);
     }
     
@@ -305,8 +255,8 @@ function drawEllipsoid(transform, colors)
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
-    gl.drawArrays( gl.TRIANGLE_FAN, 4, 356); 
+    //gl.bufferSubData(gl.ARRAY_BUFFER, 4 , flatten(colors), gl.STATIC_DRAW);
+    gl.drawArrays( gl.TRIANGLE_FAN, 4, 38); 
     
 }
 //---Forms a right triangle ---
@@ -330,8 +280,8 @@ function drawTorso()
     drawrectangle(instanceMatrix, torsoUpperColors);
     
     //console.log(torso.transformVal.y);
-    instanceMatrix = scale4(6, 1.9, 0);
-    instanceMatrix = mult(instanceMatrix, translate(0.0, -0.5, 0.0));
+    instanceMatrix = translate(0.0, -0.9, 0.0);
+    instanceMatrix = mult(instanceMatrix, scale4(6, 1.9, 0));
     drawEllipsoid(instanceMatrix, torsoLowerColors);
 }
 
@@ -339,8 +289,8 @@ function drawTorso()
 function drawNeck()
 {
     instanceMatrix = translate(-2.6, 1.0, 0.0);
-    instanceMatrix = mult(instanceMatrix, rotate(16, 0,0,1))
-    instanceMatrix = mult(instanceMatrix, scale4(1.4, 2.3, 0) );
+    instanceMatrix = mult(instanceMatrix, rotate(106, 0,0,1))
+    instanceMatrix = mult(instanceMatrix, scale4(2.3, 1.4, 0) );
     drawrectangle(instanceMatrix, neckColors);
 }
 
@@ -779,89 +729,130 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
 }
 
 function initializeColors(){
+    for(i = 0 ; i <= 3; i++)
+        headColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    headColors.push(vec4(0.8, 0.37, 0.07, 1.0));
 
-    var r = 0;
-    var g = 0;
-    var b = 0;
-    
-    for(i = 0; i < 180; i++)
-    {
-        headColors.push(vec4(0.6, 0.29, 0.1, 1.0));
-    }
-    for(i = 0; i < 100; i++)
-    {
-        headColors.push(vec4(0.6+ i*0.01, 0.29 + i*0.01, 0.1-0.03/100*i, 1.0));
-    }
+    for(i = 0; i <= 5; i++)
+        headColors.push(vec4(0.4, 0.28, 0.28, 1.0));
+    for(i = 0; i <= 9; i++)
+        headColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 9; i++)
+        headColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    for(i = 0; i <= 7; i++)
+        headColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 2; i++)
+        headColors.push(vec4(0.4, 0.28, 0.28, 1.0));
 
-    for(i = 0; i < 80; i++)
-    {
-        headColors.push(vec4(0.8, 0.37 ,0.07, 1.0));
-    }
     
-    //for(i = 0; i < 4; i++)
-        noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
-        noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
-        noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
-        noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    noseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    noseColors.push(vec4(0.8, 0.78, 0.76, 1.0));
     
-    //for(i = 0; i < 4; i++)
-        noseTipColors.push(vec4(0.6, 0.6, 0.6, 1.0));
-        noseTipColors.push(vec4(0.6, 0.6, 0.6, 1.0));
-        noseTipColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    noseTipColors.push(vec4(0.6, 0.6, 0.6, 1.0));
+    noseTipColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    noseTipColors.push(vec4(0.0, 0.0, 0.0, 1.0));
     
-    //for(i = 0; i < 4; i++)
-        leftEarColors.push(vec4(0.7, 0.58, 0.4, 1.0));
-        leftEarColors.push(vec4(0.7, 0.39, 0.1, 1.0));
-        leftEarColors.push(vec4(0.6, 0.29, 0.07, 1.0));
+    leftEarColors.push(vec4(0.7, 0.58, 0.4, 1.0));
+    leftEarColors.push(vec4(0.7, 0.39, 0.1, 1.0));
+    leftEarColors.push(vec4(0.6, 0.29, 0.07, 1.0));
     
-    //for(i = 0; i < 4; i++)
-        rightEarColors.push(vec4(0.64, 0.52, 0.36, 1.0));
-        rightEarColors.push(vec4(0.64, 0.35, 0.04, 1.0));
-        rightEarColors.push(vec4(0.54, 0.25, 0.03, 1.0));
+    rightEarColors.push(vec4(0.64, 0.52, 0.36, 1.0));
+    rightEarColors.push(vec4(0.64, 0.35, 0.04, 1.0));
+    rightEarColors.push(vec4(0.54, 0.25, 0.03, 1.0));
+    
+    mouthColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    mouthColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    mouthColors.push(vec4(0.8, 0.37, 0.07, 1.0));
 
-    for(i = 0; i < 360; i++)
-        tailBaseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
-    
-    for(i = 0; i < 3; i++)
-        mouthColors.push(vec4(0.8 - i*0.1, 0.78 - i*0.1, 0.76 - i*0.1, 1.0));
-    
-    for(i = 0; i < 360; i++)
+    for(i = 0 ; i <= 3; i++)
+        torsoLowerColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    torsoLowerColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+
+    for(i = 0; i <= 7; i++)
+        torsoLowerColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 19; i++)
+        torsoLowerColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    for(i = 0; i <= 11; i++)
         torsoLowerColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
     for(i = 0; i < 4; i++)
         torsoUpperColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        neckColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    neckColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    neckColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    neckColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    neckColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+        
     
-    for(i = 0; i < 4; i++)
-        frontUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontUpperLegColors.push(vec4(0.8, 0.78, 0.76, 1.0));
+    frontUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontUpperLegColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+
+    rearUpperLegColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    rearUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    rearUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        rearUpperLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontLowerLegColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    frontLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        frontLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    rearLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    rearLowerLegColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    rearLowerLegColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    rearLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        rearLowerLegColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontPawColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    frontPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    frontPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        frontPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    rearPawColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    rearPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    rearPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
     
-    for(i = 0; i < 4; i++)
-        rearPawColors.push(vec4(0.8, 0.37, 0.07, 1.0));
-    
-    for(i = 0; i < 360; i++)
+    for(i = 0 ; i <= 3; i++)
+        tailBaseColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    tailBaseColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    for(i = 0; i <= 9; i++)
+        tailBaseColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+
+    for(i = 0; i <= 9; i++)
+        tailBaseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 9; i++)
+        tailBaseColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 9; i++)
+        tailBaseColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+
+    for(i = 0 ; i <= 3; i++)
+        tailBodyColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    tailBodyColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    for(i = 0; i <= 9; i++)
+        tailBodyColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    for(i = 0; i <= 9; i++)
         tailBodyColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 7; i++)
+        tailBodyColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 11; i++)
+        tailBodyColors.push(vec4(0.43, 0.3, 0.17, 1.0));
     
-    for(i = 0; i < 360; i++)
+    for(i = 0 ; i <= 3; i++)
+        tailTipColors.push(vec4(0.0, 0.0, 0.0, 1.0));
+    tailTipColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    for(i = 0; i <= 9; i++)
+        tailTipColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    for(i = 0; i <= 9; i++)
         tailTipColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 7; i++)
+        tailTipColors.push(vec4(0.8, 0.37, 0.07, 1.0));
+    for(i = 0; i <= 11; i++)
+        tailTipColors.push(vec4(0.43, 0.3, 0.17, 1.0));
     
-    //for(i = 0; i < 4; i++)
-        tailTipTipColors.push(vec4(0.75, 0.42, 0.12, 1.0));
-        tailTipTipColors.push(vec4(0.85, 0.7, 0.7, 1.0));
-        tailTipTipColors.push(vec4(0.75, 0.42, 0.12, 1.0));
+    tailTipTipColors.push(vec4(0.43, 0.3, 0.17, 1.0));
+    tailTipTipColors.push(vec4(0.85, 0.7, 0.7, 1.0));
+    tailTipTipColors.push(vec4(0.75, 0.42, 0.12, 1.0));
         
     
 }
