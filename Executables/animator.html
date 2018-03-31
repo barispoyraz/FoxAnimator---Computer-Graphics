@@ -29,6 +29,8 @@
 <script type="text/javascript" src="../Source/initShaders.js"></script>
 <script type="text/javascript" src="../Source/MV.js"></script>
 <script type="text/javascript" src="../Source/w3.js"></script>
+<script type="text/javascript" src="../Source/model.js"></script>
+<script type="text/javascript" src="../Source/frame.js"></script>
     
     <script
   src="https://code.jquery.com/jquery-3.3.1.js"
@@ -91,6 +93,14 @@
     font-size: 9px;
     text-align: center;
     }
+
+    .buttonStyle {
+        background-color: rgba(38, 132, 219, 0.8);  
+        border: 1px solid rgba(58, 111, 226, 0.8);
+        padding: 15px 50px;
+        font-size: 14px;
+        text-align: center;
+    }
     </style>
 
 </head>
@@ -102,11 +112,12 @@
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
     
-    <select id="a">
-        <option value="open_mouth" selected>Open Mouth</option>
-        <option value="close_mouth">Close Mouth</option>
-    </select>
-    
+        <br>
+        <input type = "button" class="buttonStyle" id="play_button" value="Play" onclick="toggleAnimation()">
+        <input type = "button" class="buttonStyle" id="add_button" value="Add Frame" onclick="addFrame()">
+
+
+    <br>
     <br>
     
     <!---Reference: https://www.w3schools.com/howto/howto_js_accordion.asp !-->
@@ -145,17 +156,17 @@
                     
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Head Rotation</p>
-                        <input id="d" type="range" min="0" max="52" step="0.1" class="slider" onInput="rotateLimb(Head, 2.6, 1, this.value)">
+                        <input id="d" type="range" min="0" max="52" step="0.1" class="slider" onInput="rotateLimb(Head, 0, 0, this.value)">
                     </div>
                 
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Neck Rotation</p>
-                        <input id="d" type="range" min="-70" max="25" step="0.1" class="slider" onInput="rotateLimb(neck, 2.2, 0.5, this.value)">
+                        <input id="d" type="range" min="-70" max="25" step="0.1" class="slider" onInput="rotateLimb(neck, 0, 0, this.value)">
                     </div>
                     
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Mouth Rotation</p>
-                        <input id="mouth_rotation" type="range" min="-15" max="0" step="0.1" class="slider" onInput="rotateLimb(mouth, 3.3, 1.2, this.value)">
+                        <input id="mouth_rotation" type="range" min="-15" max="0" step="0.1" class="slider" onInput="rotateLimb(mouth, 0, 0, this.value)">
                     </div>
             
                 </div>
@@ -172,16 +183,16 @@
                                 <div class="panel" style="display: none">
                                         <div class ="slidecontainer" style="display: inline-block">
                                             <p style="text-align: center">Upper Leg Rotation</p>
-                                            <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(rightFrontUpperLeg, 2.8, -1, this.value)">
+                                            <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(rightFrontUpperLeg, 0, 0, this.value)">
                                         </div>
                                         <div class ="slidecontainer" style="display: inline-block">
                                             <p style="text-align: center">Lower Leg Rotation</p>
-                                            <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontLowerLeg, 1.5, -2, this.value)">
+                                            <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontLowerLeg, 0, 0,this.value)">
                                         </div>
                                 
                                         <div class ="slidecontainer" style="display: inline-block">
                                             <p style="text-align: center">Paw Rotation</p>
-                                            <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontPaw, 1.5, -3.4, this.value)">
+                                            <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontPaw, 0, 0, this.value)">
                                         </div>
                                 </div>
                     
@@ -189,16 +200,16 @@
                                 <div class="panel" style="display: none">
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Upper Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
+                                        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(leftFrontUpperLeg, 0, 0, this.value)">
                                     </div>
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Lower Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
+                                        <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontLowerLeg, 0, 0, this.value)">
                                     </div>
                             
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Paw Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontPaw, 1.5, -3.4, this.value)">
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontPaw, 0, 0, this.value)">
                                     </div>
                                 </div>
                             </div>
@@ -211,16 +222,16 @@
                                 <div class="panel" style="display: none">
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Upper Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(rightRearUpperLeg, -2.1, -0.8, this.value)">
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(rightRearUpperLeg, 0, 0, this.value)">
                                     </div>
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Lower Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearLowerLeg, -3.4, -2.4, this.value)">
+                                        <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearLowerLeg, 0, 0, this.value)">
                                     </div>
                             
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Paw Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearPaw, -3.4, -3.5, this.value)">
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearPaw, 0, 0, this.value)">
                                     </div>
                                 </div>
                     
@@ -228,16 +239,16 @@
                                 <div class="panel" style="display: none">
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Upper Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(leftRearUpperLeg, -2.1, -0.8, this.value)">
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(leftRearUpperLeg, 0, 0, this.value)">
                                     </div>
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Lower Leg Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-90" max="20" step="0.1" class="slider" onInput="rotateLimb(leftRearLowerLeg, -3.4, -2.4, this.value)">
+                                        <input id="legs_rotation" type="range" min="-90" max="20" step="0.1" class="slider" onInput="rotateLimb(leftRearLowerLeg, 0, 0, this.value)">
                                     </div>
                             
                                     <div class ="slidecontainer" style="display: inline-block">
                                         <p style="text-align: center">Paw Rotation</p>
-                                        <input id="legs_rotation" type="range" min="-90" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearPaw, -3.4, -3.5, this.value)">
+                                        <input id="legs_rotation" type="range" min="-90" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearPaw, 0, 0, this.value)">
                                     </div>
                                 </div>
                             </div>
@@ -250,15 +261,15 @@
                 <div class="panel" style="display: none">
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Tail Base Change</p>
-                        <input id="tailBaseChange" type="range" min="-90" max="75" step="0.1" class="slider" onInput="rotateLimb(tailBase, 1.2, 0.0, this.value)">
+                        <input id="tailBaseChange" type="range" min="-130" max="75" step="0.1" class="slider" onInput="rotateLimb(tailBase, 0, 0.0, this.value)">
                     </div>
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Tail Body Change</p>
-                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailBody, -4.3, 0.8, this.value)">
+                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailBody, 0, 0, this.value)">
                     </div>
                     <div class ="slidecontainer" style="display: inline-block">
                         <p style="text-align: center">Tail Tip Change</p>
-                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailTip, -5.6, 0.8, this.value)">
+                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailTip, 0, 0, this.value)">
                     </div>  
                 </div>
             </div>
