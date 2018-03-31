@@ -1,6 +1,6 @@
 /*
 Authors:Alper Şahıstan, Barış Poyraz
-ID: 21501207, IDni yaz hocam 
+ID: 21501207, 21401952
 CS465 Assignment 2 - The Fox Animator
 */
 
@@ -12,8 +12,6 @@ var instanceMatrix = mat4();
 var theta =10;
 
 var movement = 0;
-
-var mouthMovement = 0;
 
 rectangularVertices = 
 [
@@ -62,13 +60,6 @@ var projectionMatrix;
 var modelViewMatrix;
 var modelViewMatrixLoc;
 
-//HTML Elements
-var mouthMovementOption = document.getElementById("a");
-var choosenOption;
-var changed = false;
-var countUpClose = 0;
-var countUpOpen = 0;
-
 var colorsArray = [];
 
 var headColors = [];    //-
@@ -108,6 +99,9 @@ var differenceInX = 0;
 var previousSliderValueInY = -0.5;
 var differenceInY = 0;
 
+//Animation Keyframes
+var keyFrames = [];
+
 function scale4(a, b, c) {
     var result = mat4();
     result[0][0] = a;
@@ -145,71 +139,6 @@ function ellipsoid()
         pointsArray.push(circularVertices[k]);
     }
 }
-
-function transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez)
-{
-    this.posx = posx;
-    this.posy = posy;
-    this.posz = posz;
-    
-    this.thetax = thetax;
-    this.thetay = thetay;
-    this.thetaz = thetaz;
-
-    this.scalex = scalex;
-    this.scaley = scaley;
-    this.scalez = scalez;
-}
-
-/*limb object holds 
-*a transform matrix called transform,
-*a transformValues object for slider control and individual transform values
-*a render/draw method
-*a list of its childen
-*/
-function limb(transform, transformVal, renderMethod, children)
-{  
-    this.transform = transform;
-    this.posX = transformVal.posx;
-    this.posY = transformVal.posy;
-    this.posZ = transformVal.posz; 
-
-    this.rotX = transformVal.thetax;
-    this.rotY = transformVal.thetay;
-    this.rotZ = transformVal.thetaz;
-
-    this.scaX = transformVal.scalex;
-    this.scaY = transformVal.scaley;
-    this.scaZ = transformVal.scalez;
-
-    this.draw = renderMethod;
-    this.children =[];
-    for (i = 3; i < children != null && i< arguments.length; i++)
-        this.children.push(arguments[i]);
-}
-
-function traverseModel(root)
-{
-    stack.push(modelViewMatrix);
-    modelViewMatrix = mult(modelViewMatrix, root.transform);
-
-    var i = root.children.length-1;
-    while (root.children[i] != null && i >= root.children.length/2)
-    {
-        traverseModel(root.children[i]);
-        i--;
-    }
-    if(root.draw!= null)
-        root.draw();
-    while (root.children[i] != null )
-    {
-        traverseModel(root.children[i]);
-        i--;
-    } 
-
-    modelViewMatrix = stack.pop();
-}
-
 //-------Render Functions--------
 
 //----PRIMITIVES-----
@@ -220,7 +149,6 @@ function drawrectangle(transform, colors)
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 4);
 }
 
@@ -231,8 +159,7 @@ function drawEllipsoid(transform, colors)
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 4 , flatten(colors), gl.STATIC_DRAW);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );;
     gl.drawArrays( gl.TRIANGLE_FAN, 4, 38); 
     
 }
@@ -243,7 +170,6 @@ function drawRTriangle(transform, colors)
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0 , flatten(colors));
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 3);
 }
 
@@ -252,11 +178,9 @@ function drawRTriangle(transform, colors)
 //---Forms the Torso---
 function drawTorso()
 {
-    //SIKINTI VARSA BURAYA BAK!
     instanceMatrix = scale4(6, 1.9, 0);
     drawrectangle(instanceMatrix, torsoUpperColors);
     
-    //console.log(torso.transformVal.y);
     instanceMatrix = translate(0.0, -0.9, 0.0);
     instanceMatrix = mult(instanceMatrix, scale4(6, 1.9, 0));
     drawEllipsoid(instanceMatrix, torsoLowerColors);
@@ -410,10 +334,8 @@ function resize()
 
 window.onload = function init(){
     canvas = document.getElementById( "gl-canvas" );
-    /*canvas.width = window.innerWidth;
-    canvas.height = 600;*/
+
     resize();
-    context = canvas.getContext("webgl");
     gl = WebGLUtils.setupWebGL( canvas );
        
     if ( !gl ) { alert( "WebGL isn't available" ); 
@@ -466,162 +388,145 @@ window.onload = function init(){
     
     m = new mat4();
 
-    var mouthT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var mouthT = new transformValues (-3.3, 1.2,0,0,0,0,1,1,0); 
     mouth = new limb(m, mouthT, drawMouth, null);
 
-    var headT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var headT = new transformValues (-2.6, 1,0,0,0,0,1,1,0); 
     Head = new limb(m, headT, drawHead, mouth);
 
-    var neckT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var neckT = new transformValues (-2.2,0.5,0,0,0,0,1,1,0); 
     neck = new limb(m, neckT, drawNeck, Head);
 
     
-    var leftFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var leftFrontPawT = new transformValues (-1.5,-3.4,0,0,0,0,1,1,0); 
     leftFrontPaw = new limb(m, leftFrontPawT, drawFrontPaws, null);
 
-    var rightFrontPawT = new transformValues (0,0,0,0,0,0,1,1,0);
+    var rightFrontPawT = new transformValues (-1.5, -3.4,0,0,0,0,1,1,0);
     rightFrontPaw = new limb(translate(0,0,-0.0001), rightFrontPawT, drawFrontPaws, null);
 
 
-    var leftFrontLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0);
+    var leftFrontLowerLegT = new transformValues (-1.5,-2,0,0,0,0,1,1,0);
     leftFrontLowerLeg = new limb(m, leftFrontLowerLegT, drawFrontLowerLeg, leftFrontPaw);
     
-    var rightFrontLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var rightFrontLowerLegT = new transformValues (-1.5,-2,0,0,0,0,1,1,0); 
     rightFrontLowerLeg = new limb(m, rightFrontLowerLegT, drawFrontLowerLeg, rightFrontPaw);
 
 
-    var leftFrontUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var leftFrontUpperLegT = new transformValues (-2.8,-1,0,0,0,0,1,1,0); 
     leftFrontUpperLeg = new limb(m, leftFrontUpperLegT, drawFrontUpperLeg, leftFrontLowerLeg);
 
-    var rightFrontUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var rightFrontUpperLegT = new transformValues (-2.8,-1,0,0,0,1,1,0); 
     rightFrontUpperLeg = new limb(m, rightFrontUpperLegT, drawFrontUpperLeg, rightFrontLowerLeg);
 
 
-    var leftRearPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var leftRearPawT = new transformValues (3.4,-3.5,0,0,0,0,1,1,0); 
     leftRearPaw = new limb(m, leftRearPawT, drawRearPaws, null);
 
-    var rightRearPawT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var rightRearPawT = new transformValues (3.4,-3.5,0,0,0,0,1,1,0); 
     rightRearPaw = new limb(m, rightRearPawT, drawRearPaws, null);
 
 
-    var leftRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var leftRearLowerLegT = new transformValues (3.4,-2.4,0,0,0,0,1,1,0); 
     leftRearLowerLeg = new limb(m, leftRearLowerLegT, drawRearLowerLeg, leftRearPaw);
 
-    var rightRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var rightRearLowerLegT = new transformValues (3.4,-2.4,0,0,0,0,1,1,0); 
     rightRearLowerLeg = new limb(m, rightRearLowerLegT, drawRearLowerLeg, rightRearPaw);
 
 
-    var leftRearUpperLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var leftRearUpperLegT = new transformValues (2.1,-0.8,0,0,0,100,1,1,0); 
     leftRearUpperLeg = new limb(m, leftRearUpperLegT, drawRearUpperLeg, leftRearLowerLeg);
 
-    var rightRearLowerLegT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var rightRearLowerLegT = new transformValues (2.1,-0.8,0,0,0,0,1,1,0); 
     rightRearUpperLeg = new limb(m, rightRearLowerLegT, drawRearUpperLeg, rightRearLowerLeg);
 
-    var tailTipT= new transformValues (0,0,0,0,0,0,1,1,0); 
+    var tailTipT= new transformValues (5.6, 0.8,0,0,0,0,1,1,0); 
     tailTip = new limb(m, tailTipT, drawTailTip, null);
 
-    var tailBodyT = new transformValues (0,0,0,0,0,0,1,1,0); 
+    var tailBodyT = new transformValues (4.3,0.8,0,0,0,0,1,1,0); 
     tailBody = new limb(m, tailBodyT, drawTailBody, tailTip);
 
-    var tailBaseT = new transformValues (4.2,0.7,0,0,0,0,1,1,0); 
+    var tailBaseT = new transformValues (3,0.8,0,0,0,0,1,1,0); 
     tailBase = new limb(m, tailBaseT, drawTailBase, tailBody);
 
 
     var torsoT = new transformValues (0,0,0,0,0,0,1,1,0); 
     torso = new limb(m, torsoT, drawTorso, leftFrontUpperLeg, leftRearUpperLeg, neck, tailBase, rightFrontUpperLeg, rightRearUpperLeg);
     
+    var otherLimbs = [Head, mouth, neck, torso, leftFrontUpperLeg,
+         leftFrontLowerLeg, leftFrontPaw, rightFrontUpperLeg,
+         rightFrontLowerLeg, rightFrontPaw, leftRearUpperLeg,
+         leftRearLowerLeg, leftRearPaw, rightRearUpperLeg,
+         rightRearLowerLeg, rightRearPaw, tailBase, tailBody, tailTip];
+
     var foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
-    fox = new limb(m, foxT, null, torso);
-    
-    mapHTMLElementsToEventListeners();
+    fox = new model(m, foxT, torso, otherLimbs);
 
     render();
 }
 
+var f = 0;
+
+var play = false;
+var flag = true;
+
 function render()
 {
-    //resize();
-
-    if(choosenOption === 1 && changed === true){
-        var m = mouth.transform;
-        if(countUpClose <= 0.9){
-            countUpClose += 0.01;
-            m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
-            m = mult(m, rotate(-0.01, 0, 0 ,1));
-            m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
-            mouth.transform = m;
+    if(play){
+        if(flag){
+            console.log("start");
+            var newFox = new keyFrame(fox);
+            easeInOut(fox, newFox, keyFrames[0], 1, 1);
+            traverseModel(fox.root);   
+            flag = false;
         }
-        else{
-            changed = false;
-            countUpClose = 0;
+        if(f > 30 && index < keyFrames.length-1)
+        {
+            index++;
+            f=0;
+        }
+
+        else if(f <= 30)
+        {
+            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, 30);
+            f = (f+1);
+            traverseModel(fox.root);
+        }
+        else {
+            index = 0;
+            toggleAnimation();
         }
     }
-    else if(choosenOption === 0 && changed === true){
-        var m = mouth.transform;
-        if(countUpOpen <= 0.9){
-            console.log("aaa111");
-            countUpOpen += 0.01;
-            m = mult(m, translate(mouth.posX - 0.1, mouth.posY, mouth.posZ));
-            m = mult(m, rotate(0.01, 0, 0 ,1));
-            m = mult(m, translate(mouth.posX + 0.1, mouth.posY, mouth.posZ));
-            mouth.transform = m;
-        }
-        else{
-            changed = false;
-            countUpOpen = 0;
-        }
-    }
-
-    traverseModel(fox);
+    traverseModel(fox.root);
     requestAnimFrame(render);
-}
 
-function mapHTMLElementsToEventListeners(){
-    
-    mouthMovementOption.addEventListener("change", function(){
-        var index = mouthMovementOption.selectedIndex; //0: Open Mouth, 1: Close Mouth
-        choosenOption = index;
-        
-        //Open Mouth
-        if(choosenOption === 0){
-            changed = true;
-        }
-        else{
-            changed = true;
-            mouthMovement = 0;
-        }
-    });
-    
-}
 
+}
 
 //---------------------SLIDER FUNCTIONS------------------------------
 
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
 function translateX(value){
 
-    differenceInX =  fox.posX - value;
-    fox.posX = value;
+    differenceInX =  fox.root.posX - value;
+    fox.root.posX= value;
     
-    var m = fox.transform;
-    m = mult(m, translate(-differenceInX,  -differenceInY, fox.posZ));
+    var m = fox.root.transform;
+    m = mult(m, translate(-differenceInX,  -differenceInY, fox.root.posZ));
 
-    fox.transform = m;
+    fox.root.transform = m;
     differenceInX = 0;
-    //traverseModel(torso);
 }
 
 //REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
 function translateY(value){
-    differenceInY =  fox.posY - value;
-    fox.posY = value;
+    differenceInY =  fox.root.posY - value;
+    fox.root.posY = value;
     
-    var m = fox.transform;
-    m = mult(m, translate(-differenceInX, - differenceInY, fox.posZ));
+    var m = fox.root.transform;
+    m = mult(m, translate(-differenceInX, - differenceInY, fox.root.posZ));
 
-    fox.transform = m;
+    fox.root.transform = m;
     differenceInY = 0;
-    //traverseModel(torso);
 }
 
 var scaleRate = 1;
@@ -645,14 +550,40 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
     aLimb.rotZ = (value);
 
     var m = aLimb.transform;
-    m = mult(m, translate(aLimb.posX - offsetX,
+    m = mult(m, translate(aLimb.posX + offsetX,
             aLimb.posY + offsetY,
             aLimb.posZ));
     m = mult(m, rotate(rot, 0,0,1));
-    m = mult(m, translate(-aLimb.posX + offsetX,
+    m = mult(m, translate(-aLimb.posX - offsetX,
         -aLimb.posY - offsetY,
         -aLimb.posZ));
     aLimb.transform = m;
+}
+
+var index = 0
+
+function toggleAnimation(){
+    play = !play;
+    index = 0;
+    flag = true;
+}
+
+function playAnimation(index){
+
+    console.log("index is: " + index);
+    console.log("keyframse is: " + keyFrames.length);
+    if(index > 0){
+        console.log("aa");
+        toggleAnimation();
+    }
+    else{
+        
+    }
+}
+
+function addFrame(){
+    var model = new keyFrame(copyModel(fox));
+    keyFrames.push(model);
 }
 
 function initializeColors(){
