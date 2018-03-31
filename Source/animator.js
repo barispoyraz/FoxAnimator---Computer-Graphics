@@ -628,14 +628,14 @@ var scaleRate = 1;
 
 function scale(value)
 {
-    scaleRate = value / fox.scaX ;
-    fox.scaX = value;
-    fox.scaY = value;
+    scaleRate = value / torso.scaX ;
+    torso.scaX = value;
+    torso.scaY = value;
     
-    var m = fox.transform;
+    var m = torso.transform;
     m = mult(m, scale4(scaleRate,  scaleRate, 1));
 
-    fox.transform = m;
+    torso.transform = m;
     scaleRate = 1;
 }
 
