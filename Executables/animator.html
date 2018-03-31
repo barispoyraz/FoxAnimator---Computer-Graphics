@@ -79,14 +79,14 @@
     .grid-container {
     display: inline-grid;
     grid-template-columns: 25% 25% 25% 25%;
-    background-color: #2196F3;
+    background-color: rgb(38, 132, 219);
     padding: 5px;
     width: 100%;
     }
     
     .grid-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(144, 175, 240, 0.8);
+    background-color: rgba(110, 226, 226, 0.8);
+    border: 1px solid rgba(58, 111, 226, 0.8);
     padding: 20px;
     font-size: 9px;
     text-align: center;
@@ -164,81 +164,87 @@
             <div class="grid-item">
                 <button class="accordion">Lower Body Transformations</button>
                 <div class="panel" style="display: none">
-                    <button class="accordion">Front Legs</button>
-                    <div class="panel" style="display: none">
-                        <button class="accordion">Right</button>
-                        <div class="panel" style="display: none">
-                                <div class ="slidecontainer" style="display: inline-block">
-                                    <p style="text-align: center">Upper Leg Rotation</p>
-                                    <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(rightFrontUpperLeg, 2.8, -1, this.value)">
+                    <div class="grid-container" style = "grid-template-columns: 50% 50% ;">
+                        <div class="grid-item">
+                            <button class="accordion">Front Legs</button>
+                            <div class="panel" style="display: none">
+                                <button class="accordion">Right</button>
+                                <div class="panel" style="display: none">
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Upper Leg Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(rightFrontUpperLeg, 2.8, -1, this.value)">
+                                        </div>
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Lower Leg Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontLowerLeg, 1.5, -2, this.value)">
+                                        </div>
+                                
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Paw Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontPaw, 1.5, -3.4, this.value)">
+                                        </div>
                                 </div>
-                                <div class ="slidecontainer" style="display: inline-block">
-                                    <p style="text-align: center">Lower Leg Rotation</p>
-                                    <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontLowerLeg, 1.5, -2, this.value)">
-                                </div>
-                        
-                                <div class ="slidecontainer" style="display: inline-block">
-                                    <p style="text-align: center">Paw Rotation</p>
-                                    <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontPaw, 1.5, -3.4, this.value)">
-                                </div>
-                        </div>
-            
-                        <button class="accordion">Left</button>
-                        <div class="panel" style="display: none">
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Upper Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
-                            </div>
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Lower Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
-                            </div>
                     
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Paw Rotation</p>
-                                <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontPaw, 1.5, -3.4, this.value)">
+                                <button class="accordion">Left</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(leftFrontUpperLeg, 2.8, -1, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontLowerLeg, 1.5, -2, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontPaw, 1.5, -3.4, this.value)">
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+    
+                        <div class="grid-item">
+                            <button class="accordion">Rear Legs</button>
+                            <div class="panel" style="display: none">
+                                <button class="accordion">Right</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(rightRearUpperLeg, -2.1, -0.8, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearLowerLeg, -3.4, -2.4, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearPaw, -3.4, -3.5, this.value)">
+                                    </div>
+                                </div>
+                    
+                                <button class="accordion">Left</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(leftRearUpperLeg, -2.1, -0.8, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="20" step="0.1" class="slider" onInput="rotateLimb(leftRearLowerLeg, -3.4, -2.4, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearPaw, -3.4, -3.5, this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                    </div>
                         </div>
                     </div>
-            
-                    <button class="accordion">Rear Legs</button>
-                    <div class="panel" style="display: none">
-                        <button class="accordion">Right</button>
-                        <div class="panel" style="display: none">
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Upper Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-50" max="75" step="0.1" class="slider" onInput="rotateLimb(rightRearUpperLeg, -2.1, -0.8, this.value)">
-                            </div>
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Lower Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearLowerLeg, -3.4, -2.4, this.value)">
-                            </div>
-                    
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Paw Rotation</p>
-                                <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearPaw, -3.4, -3.5, this.value)">
-                            </div>
-                        </div>
-            
-                        <button class="accordion">Left</button>
-                        <div class="panel" style="display: none">
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Upper Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-50" max="75" step="0.1" class="slider" onInput="rotateLimb(leftRearUpperLeg, -2.1, -0.8, this.value)">
-                            </div>
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Lower Leg Rotation</p>
-                                <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearLowerLeg, -3.4, -2.4, this.value)">
-                            </div>
-                    
-                            <div class ="slidecontainer" style="display: inline-block">
-                                <p style="text-align: center">Paw Rotation</p>
-                                <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearPaw, -3.4, -3.5, this.value)">
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-            </div>
             <div class="grid-item">
                 <button class="accordion">Tail Transformations</button>
                 <div class="panel" style="display: none">
