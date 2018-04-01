@@ -11,7 +11,7 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
         var t1 = framenum/inbetweenerCount;
         var transformationVal = t1*t1/(2.0 * (t1*t1-t1)+ 1.0);
         var t2 = (framenum-1)/inbetweenerCount;
-        transformationVal = transformationVal - (t2*t2/(2.0 * (t2*t2-t2)+ 1.0));
+        transformationVal =(t2*t2/(2.0 * (t2*t2-t2)+ 1.0)) - transformationVal;
         var k1T;
         var k2T;
         var m;
@@ -63,8 +63,10 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                 {
                     m = model.limbs[i].transform;
                     m = mult(m, translate( model.limbs[i].posX, model.limbs[i].posY, 0))
-                    m = mult (m, rotate(- transformationVal * (k2T- k1T), 0, 0, 1)); 
+                    m = mult (m, rotate(transformationVal * (k2T- k1T), 0, 0, 1)); 
                     model.limbs[i].transform =  mult(m, translate( -model.limbs[i].posX, -model.limbs[i].posY, 0))
+
+                    model.limbs[i].rotZ = transformationVal * (k2T- k1T);
                 }
             }    
         }

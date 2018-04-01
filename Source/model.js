@@ -85,14 +85,15 @@ function copyLimb(aLimb){
     var children = [];
  
    
-    while(aLimb.children[i] != null)
+    while(aLimb.children[i] != null && children.length>0)
     {
-        child = copyLimb(aLimb.children[i]);
+        var child = copyLimb(aLimb.children[i]);
         children[i] = child;
         i++;
     }
-  
-    rtn = new limb(aLimb.transform, cT, aLimb.renderMethod, children);
+    /*var m = new mat4();
+    var t = mult(m, aLimb.transform);*/
+    rtn = new limb(new mat4(), cT, aLimb.draw, children);
 
     return rtn;
 }
@@ -102,7 +103,7 @@ function model(transform, transformVal, rootLimb, limbs)
 
     this.root = new limb (transform, transformVal, null, rootLimb);
 
-    this.torso =  rootLimb;
+    //this.torso =  rootLimb;
     this.limbs = limbs;
     
 }
@@ -116,8 +117,6 @@ function copyModel(aModel){
     aModel.root.scaX,aModel.root.scaY,aModel.root.scaZ);
 
 
-    var root = new limb(aModel.root.transform, cT, null, aModel.root.children[0]);
-
     //var torso = copyLimb(aModel.rootLimb);
 
     var limbs = [];
@@ -128,7 +127,9 @@ function copyModel(aModel){
         i++;
     }
 
-    rtn = new model(aModel.transform, cT, root, limbs);
+    //var root = copyLimb(aModel.root);
+
+    rtn = new model(aModel.transform, cT, limbs[3], limbs);
 
     return rtn;
 

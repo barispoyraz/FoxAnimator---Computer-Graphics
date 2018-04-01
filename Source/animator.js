@@ -467,34 +467,12 @@ window.onload = function init(){
 var f = 0;
 
 var play = false;
-var flag = true;
+var rewindToStart = true;
 
 function render()
 {
     if(play){
-        if(flag){
-            console.log("start");
-            var newFox = new keyFrame(fox);
-            easeInOut(fox, newFox, keyFrames[0], 1, 1);
-            traverseModel(fox.root);   
-            flag = false;
-        }
-        if(f > 30 && index < keyFrames.length-2)
-        {
-            index++;
-            f=0;
-        }
-
-        else if(f <= 30)
-        {
-            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, 30);
-            f = (f+1);
-            traverseModel(fox.root);
-        }
-        else {
-            index = 0;
-            toggleAnimation();
-        }
+        playAnimation();
     }
     traverseModel(fox.root);
     requestAnimFrame(render);
@@ -565,26 +543,51 @@ var index = 0
 function toggleAnimation(){
     play = !play;
     index = 0;
-    flag = true;
+    rewindToStart = true;
 }
 
-function playAnimation(index){
 
-    console.log("index is: " + index);
-    console.log("keyframse is: " + keyFrames.length);
-    if(index > 0){
-        console.log("aa");
-        toggleAnimation();
+function playAnimation(){
+    if(rewindToStart){
+        console.log("start");
+        var curmodel = new keyFrame(fox);
+        easeInOut(fox, curmodel, keyFrames[0], 1, 1);
+        /*fox = copyModel(keyFrames[0].model);
+        fox.root.transform = new mat4();*/
+        traverseModel(fox.root);   
+        rewindToStart = false;
     }
-    else{
-        
+    if(f > 30 && index < keyFrames.length-2)
+    {
+        index++;
+        f=0;
+    }
+
+    else if(f <= 30)
+    {
+        easeInOut(fox, keyFrames[index], keyFrames[index+1], f, 30);
+        f = (f+1);
+        traverseModel(fox.root);
+    }
+    else {
+        /*var curmodel = new keyFrame(fox);
+        easeInOut(fox, curmodel, keyFrames[keyFrames.length-1], 1, 1);*/
+
+        traverseModel(fox.root);
+        index = 0;
+        toggleAnimation();
     }
 }
 
 function addFrame(){
-    var model = new keyFrame(copyModel(fox));
-    keyFrames.push(model);
+    var frame = new keyFrame(copyModel(fox));
+    keyFrames.push(frame);
 }
+
+/*function addFrame(index){
+    var frame = new keyFrame(copyModel(fox));
+    keyFrames[index] = frame;
+}*/
 
 //REFERENCE:https://stackoverflow.com/questions/10559660/how-can-i-build-a-json-string-in-javascript-jquery
 //REFERENCE:https://stackoverflow.com/questions/34156282/how-do-i-save-json-to-local-text-file
