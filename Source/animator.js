@@ -102,6 +102,8 @@ var differenceInY = 0;
 //Animation Keyframes
 var keyFrames = [];
 
+var loadButton = document.getElementById("load_button");
+
 function scale4(a, b, c) {
     var result = mat4();
     result[0][0] = a;
@@ -361,8 +363,6 @@ window.onload = function init(){
 
     initializeColors();
     
-    
-    
     cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     //gl.bufferData( gl.ARRAY_BUFFER, flatten(noseColors), gl.STATIC_DRAW );
@@ -460,7 +460,7 @@ window.onload = function init(){
 
     var foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
     fox = new model(m, foxT, torso, otherLimbs);
-
+    
     render();
 }
 
@@ -479,7 +479,7 @@ function render()
             traverseModel(fox.root);   
             flag = false;
         }
-        if(f > 30 && index < keyFrames.length-1)
+        if(f > 30 && index < keyFrames.length-2)
         {
             index++;
             f=0;
@@ -584,6 +584,66 @@ function playAnimation(index){
 function addFrame(){
     var model = new keyFrame(copyModel(fox));
     keyFrames.push(model);
+}
+
+//REFERENCE:https://stackoverflow.com/questions/10559660/how-can-i-build-a-json-string-in-javascript-jquery
+//REFERENCE:https://stackoverflow.com/questions/34156282/how-do-i-save-json-to-local-text-file
+function saveFrames(){
+    var savedKeyFrames = [];
+    var str = "keyframe";
+    var key = "";
+    var i;
+    
+    for(i = 0; i < keyFrames.length; i++){
+        key = str + i;
+        savedKeyFrames[i] = {};
+        savedKeyFrames[i][key] = keyFrames[i];
+    }
+    
+    var savedKeyFramesToJSON = JSON.stringify(savedKeyFrames);
+    alert(savedKeyFramesToJSON);
+    
+    var fileName = new Date();
+    
+    var a = document.createElement("a");
+    var downloadJSON = new Blob([savedKeyFramesToJSON], {type: "text/plain"});
+    a.href = URL.createObjectURL(downloadJSON);
+    
+    a.download = fileName;
+    a.click();
+}
+
+//REFERENCE: File API & FileReader API
+function loadFrames(){
+    var choosenKeyFramesList = loadButton.files[0];
+    var reader = new FileReader();
+    var contentText;
+    
+    reader.onload = function(){
+        contentText = reader.result;
+    }
+    reader.readAsText(choosenKeyFramesList);    
+        
+    reader.onloadend = function(){
+        contentText = reader.result;
+        
+        var contentToJSON = JSON.parse(contentText);
+        var i;
+        var str = "keyframe";
+        var key = "";
+        //RESET OR ADD TO THE REST???
+        keyFrames = [];
+        
+        
+        
+        for(i = 0; i < contentToJSON.length; i++){
+            key = str + i;
+            console.log("aaaaaa");
+            console.log(contentToJSON[i][key]);
+            var model = contentToJSON[i][key];
+            keyFrames.push(model);
+        }
+    }  
 }
 
 function initializeColors(){

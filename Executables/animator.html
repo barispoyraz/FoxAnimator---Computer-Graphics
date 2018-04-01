@@ -79,27 +79,34 @@
     }
 
     .grid-container {
-    display: inline-grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    background-color: rgb(38, 132, 219);
-    padding: 5px;
-    width: 100%;
+        display: inline-grid;
+        grid-template-columns: 25% 25% 25% 25%;
+        background-color: rgb(38, 132, 219);
+        padding: 5px;
+        width: 100%;
     }
     
     .grid-item {
-    background-color: rgba(110, 226, 226, 0.8);
-    border: 1px solid rgba(58, 111, 226, 0.8);
-    padding: 20px;
-    font-size: 9px;
-    text-align: center;
+        background-color: rgba(110, 226, 226, 0.8);
+        border: 1px solid rgba(58, 111, 226, 0.8);
+        padding: 20px;
+        font-size: 9px;
+        text-align: center;
     }
 
+      /*REFERENCE: https://www.w3schools.com/howto/howto_css_animate_buttons.asp*/
     .buttonStyle {
         background-color: rgba(38, 132, 219, 0.8);  
-        border: 1px solid rgba(58, 111, 226, 0.8);
+        border: 3px solid rgba(0, 0, 0, 0.8);
         padding: 15px 50px;
         font-size: 14px;
         text-align: center;
+        cursor: pointer;
+    }
+      
+    .buttonStyle:active {
+        box-shadow: 0 2px rgba(38, 132, 219, 0.8);
+        background-color: rgba(38, 132, 219, 0.8);
     }
     </style>
 
@@ -115,7 +122,8 @@
         <br>
         <input type = "button" class="buttonStyle" id="play_button" value="Play" onclick="toggleAnimation()">
         <input type = "button" class="buttonStyle" id="add_button" value="Add Frame" onclick="addFrame()">
-
+        <input type = "button" class="buttonStyle" id="save_button" value="Save Frames" onclick="saveFrames()">
+        <input type = "file"  id="load_button" value="Load Frames" onchange="loadFrames()">
 
     <br>
     <br>

@@ -111,9 +111,9 @@ function copyModel(aModel){
     var rtn;
     var i =0;
     
-    var cT = new transformValues(aModel.root.getTransform(0), aModel.root.getTransform(1),
-    aModel.root.getTransform(2),aModel.root.getTransform(3),aModel.root.getTransform(4),aModel.root.getTransform(5),
-    aModel.root.getTransform(6),aModel.root.getTransform(7),aModel.root.getTransform(8));
+    var cT = new transformValues(aModel.root.posX, aModel.root.posY,
+    aModel.root.posZ,aModel.root.rotX,aModel.root.rotY,aModel.root.rotZ,
+    aModel.root.scaX,aModel.root.scaY,aModel.root.scaZ);
 
 
     var root = new limb(aModel.root.transform, cT, null, aModel.root.children[0]);
