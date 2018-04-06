@@ -1,6 +1,6 @@
-function keyFrame(model)
+function keyFrame(aModel)
 {
-    this.model = model;
+    this.model = aModel;
 }
 
 //

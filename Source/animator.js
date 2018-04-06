@@ -433,7 +433,7 @@ window.onload = function init(){
     rightRearLowerLeg = new limb(m, rightRearLowerLegT, drawRearLowerLeg, rightRearPaw);
 
 
-    var leftRearUpperLegT = new transformValues (2.1,-0.8,0,0,0,100,1,1,0); 
+    var leftRearUpperLegT = new transformValues (2.1,-0.8,0,0,0,0,1,1,0); 
     leftRearUpperLeg = new limb(m, leftRearUpperLegT, drawRearUpperLeg, leftRearLowerLeg);
 
     var rightRearLowerLegT = new transformValues (2.1,-0.8,0,0,0,0,1,1,0); 
@@ -464,7 +464,7 @@ window.onload = function init(){
     render();
 }
 
-var f = 0;
+var f = 1;
 
 var play = false;
 var rewindToStart = true;
@@ -474,7 +474,8 @@ function render()
     if(play){
         playAnimation();
     }
-    traverseModel(fox.root);
+    else
+        traverseModel(fox.root);
     requestAnimFrame(render);
 
 
@@ -543,6 +544,7 @@ var index = 0
 function toggleAnimation(){
     play = !play;
     index = 0;
+    f=1;
     rewindToStart = true;
 }
 
@@ -550,8 +552,25 @@ function toggleAnimation(){
 function playAnimation(){
     if(rewindToStart){
         console.log("start");
-        var curmodel = new keyFrame(fox);
-        easeInOut(fox, curmodel, keyFrames[0], 1, 1);
+        /*var curmodel = copyModel(fox);
+        var curFrame = new keyFrame(curmodel);
+        easeInOut(fox, curFrame, keyFrames[0], 1, 1);*/
+        //traverseModel(fox.root);
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].transform = new mat4();
+            //fox.limbs[i].rotZ = 0;
+        }
+        fox.root.transform = new mat4();
+        var curmodel = copyModel(fox);
+        var curFrame = new keyFrame(curmodel);
+        easeInOut(fox, curFrame, keyFrames[0], 1, 1);
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].transform = new mat4();
+            fox.limbs[i].transform = mult (keyFrames[0].model.limbs[i].transform, fox.limbs[i].transform);
+        }
+        fox.root.transform = keyFrames[0].model.root.transform;
         /*fox = copyModel(keyFrames[0].model);
         fox.root.transform = new mat4();*/
         traverseModel(fox.root);   
@@ -560,7 +579,7 @@ function playAnimation(){
     if(f > 30 && index < keyFrames.length-2)
     {
         index++;
-        f=0;
+        f=1;
     }
 
     else if(f <= 30)
@@ -570,18 +589,34 @@ function playAnimation(){
         traverseModel(fox.root);
     }
     else {
-        /*var curmodel = new keyFrame(fox);
-        easeInOut(fox, curmodel, keyFrames[keyFrames.length-1], 1, 1);*/
+        var curmodel2 = new keyFrame(fox);
+        easeInOut(fox, curmodel2, keyFrames[0], 1, 1);
+        //traverseModel(fox.root);
+
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].transform = new mat4();
+            //fox.limbs[i].rotZ = keyFrames[keyFrames.length-1].model.limbs[i].rotz;
+        }
+        fox.root.transform = new mat4();
 
         traverseModel(fox.root);
+
+       /*var curmodel = copyModel(fox);
+        var curFrame = new keyFrame(curmodel);
+        easeInOut(fox, curFrame, keyFrames[0], 1, 1);*/
         index = 0;
-        toggleAnimation();
+        ndex = 0;
+        f=1;
+    rewindToStart = true;
+        //toggleAnimation();
     }
 }
 
 function addFrame(){
     var frame = new keyFrame(copyModel(fox));
     keyFrames.push(frame);
+    keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform
 }
 
 /*function addFrame(index){

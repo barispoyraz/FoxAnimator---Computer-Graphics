@@ -149,7 +149,7 @@ function traverseModel(root)
     }
     if(root.draw!= null)
         root.draw();
-    while (root.children[i] != null )
+    while (root.children[i] != null && root.children.length>0 )
     {
         traverseModel(root.children[i]);
         i--;
