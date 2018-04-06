@@ -546,12 +546,37 @@ function toggleAnimation(){
     index = 0;
     f=1;
     rewindToStart = true;
+    
+    
+    //REFERENCE: https://stackoverflow.com/questions/9445792/uncaught-exception-cannot-call-methods-on-slider-prior-to-initialization-attem
+    if(play){
+        $("#foxMovementinXaxis").attr("disabled", true);
+        $("#foxMovementinYaxis").attr("disabled", true);
+        $("#foxScale").attr("disabled", true);
+        $("#body_rotation").attr("disabled", true);
+        $("#head_rotation").attr("disabled", true);
+        $("#neck_rotation").attr("disabled", true);
+        $("#mouth_rotation").attr("disabled", true);
+        $("#legs_rotation").attr("disabled", true);
+        $("#tailBaseChange").attr("disabled", true);
+    }
+    else{
+        $("#foxMovementinXaxis").attr("enabled", true);
+        $("#foxMovementinYaxis").attr("enabled", true);
+        $("#foxScale").attr("enabled", true);
+        $("#body_rotation").attr("enabled", true);
+        $("#head_rotation").attr("enabled", true);
+        $("#neck_rotation").attr("enabled", true);
+        $("#mouth_rotation").attr("enabled", true);
+        $("#legs_rotation").attr("enabled", true);
+        $("#tailBaseChange").attr("enabled", true);
+    }
 }
 
 
 function playAnimation(){
     if(rewindToStart){
-        console.log("start");
+        //console.log("start");
         /*var curmodel = copyModel(fox);
         var curFrame = new keyFrame(curmodel);
         easeInOut(fox, curFrame, keyFrames[0], 1, 1);*/
@@ -562,11 +587,14 @@ function playAnimation(){
             //fox.limbs[i].rotZ = 0;
         }
         fox.root.transform = new mat4();
-        var curmodel = copyModel(fox);
+        /*var curmodel = copyModel(fox);
         var curFrame = new keyFrame(curmodel);
         easeInOut(fox, curFrame, keyFrames[0], 1, 1);
+        
+        //console.log("length : " + fox.limbs.length);
         for(i = 0; i < fox.limbs.length; i++)
         {
+            //console.log("i is: " + i);
             fox.limbs[i].transform = new mat4();
             fox.limbs[i].transform = mult (keyFrames[0].model.limbs[i].transform, fox.limbs[i].transform);
         }
@@ -680,6 +708,7 @@ function loadFrames(){
             console.log(contentToJSON[i][key]);
             var model = contentToJSON[i][key];
             keyFrames.push(model);
+            //keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform;
         }
     }  
 }
