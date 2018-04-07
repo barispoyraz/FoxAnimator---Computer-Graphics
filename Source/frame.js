@@ -21,12 +21,12 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
             for(j = 0; j <= 8; j++){
                 switch(j){
                     case 0:
-                        k1T = keyFrame1.model.limbs[i].posX;
-                        k2T = keyFrame2.model.limbs[i].posX;
+                        k1T = keyFrame1.model.root.posX;
+                        k2T = keyFrame2.model.root.posX;
                         break;
                     case 1:
-                        k1T = keyFrame1.model.limbs[i].posY;
-                        k2T = keyFrame2.model.limbs[i].posY;
+                        k1T = keyFrame1.model.root.posY;
+                        k2T = keyFrame2.model.root.posY;
                         break;        
                     case 2:
                         k1T = keyFrame1.model.limbs[i].posZ;
@@ -61,12 +61,32 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
 
                 if( k1T != k2T)
                 {
-                    m = model.limbs[i].transform;
-                    m = mult(m, translate( model.limbs[i].posX, model.limbs[i].posY, 0))
-                    m = mult (m, rotate(transformationVal * (k2T- k1T), 0, 0, 1)); 
-                    model.limbs[i].transform =  mult(m, translate( -model.limbs[i].posX, -model.limbs[i].posY, 0))
 
-                    model.limbs[i].rotZ = transformationVal * (k2T- k1T);
+                    switch(j)
+                    {
+                        case 0:
+                            m = model.root.transform;
+                            //console.log(m);
+                            m = translate((- k2T + k1T) * transformationVal  , 0, 0);
+                            model.root.transform = m;
+
+                            model.root.posX =(- k2T + k1T) * transformationVal;
+                        break;
+                        case 1:
+                        break;
+                        case 6:
+                        case 7:
+                        break;
+
+                        default:
+                            m = model.limbs[i].transform;
+                            m = mult(m, translate( model.limbs[i].posX, model.limbs[i].posY, 0))
+                            m = mult (m, rotate(transformationVal * (k2T- k1T), 0, 0, 1)); 
+                            model.limbs[i].transform =  mult(m, translate( -model.limbs[i].posX, -model.limbs[i].posY, 0))
+        
+                            model.limbs[i].rotZ = transformationVal * (k2T- k1T);
+                        break;
+                    }
                 }
             }    
         }

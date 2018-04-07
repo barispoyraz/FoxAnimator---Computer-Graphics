@@ -101,6 +101,7 @@ var differenceInY = 0;
 
 //Animation Keyframes
 var keyFrames = [];
+var selectedFrame = 0;
 
 var loadButton = document.getElementById("load_button");
 
@@ -468,6 +469,7 @@ var f = 1;
 
 var play = false;
 var rewindToStart = true;
+var INBETWEENER_COUNT = 30;
 
 function render()
 {
@@ -478,7 +480,7 @@ function render()
         traverseModel(fox.root);
     requestAnimFrame(render);
 
-
+    updateProg();
 }
 
 //---------------------SLIDER FUNCTIONS------------------------------
@@ -487,7 +489,7 @@ function render()
 function translateX(value){
 
     differenceInX =  fox.root.posX - value;
-    fox.root.posX= value;
+    fox.root.posX = value;
     
     var m = fox.root.transform;
     m = mult(m, translate(-differenceInX,  -differenceInY, fox.root.posZ));
@@ -542,10 +544,14 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
 var index = 0
 
 function toggleAnimation(){
-    play = !play;
-    index = 0;
-    f=1;
-    rewindToStart = true;
+
+    if(keyFrames.length>=0)
+    {
+        play = !play;
+        index = 0;
+        f=1;
+        rewindToStart = true;
+    }
     
     
     //REFERENCE: https://stackoverflow.com/questions/9445792/uncaught-exception-cannot-call-methods-on-slider-prior-to-initialization-attem
@@ -559,102 +565,118 @@ function toggleAnimation(){
         $("#mouth_rotation").attr("disabled", true);
         $("#legs_rotation").attr("disabled", true);
         $("#tailBaseChange").attr("disabled", true);
+        document.getElementById("play_button").value= "Stop";
     }
     else{
-        $("#foxMovementinXaxis").attr("enabled", true);
-        $("#foxMovementinYaxis").attr("enabled", true);
-        $("#foxScale").attr("enabled", true);
-        $("#body_rotation").attr("enabled", true);
-        $("#head_rotation").attr("enabled", true);
-        $("#neck_rotation").attr("enabled", true);
-        $("#mouth_rotation").attr("enabled", true);
-        $("#legs_rotation").attr("enabled", true);
-        $("#tailBaseChange").attr("enabled", true);
+        $("#foxMovementinXaxis").attr("disabled", false);
+        $("#foxMovementinYaxis").attr("disabled", false);
+        $("#foxScale").attr("disabled", false);
+        $("#body_rotation").attr("disabled", false);
+        $("#head_rotation").attr("disabled", false);
+        $("#neck_rotation").attr("disabled", false);
+        $("#mouth_rotation").attr("disabled", false);
+        $("#legs_rotation").attr("disabled", false);
+        $("#tailBaseChange").attr("disabled", false);
+        document.getElementById("play_button").value= "Play";     
     }
 }
 
 
 function playAnimation(){
     if(rewindToStart){
-        //console.log("start");
-        /*var curmodel = copyModel(fox);
-        var curFrame = new keyFrame(curmodel);
-        easeInOut(fox, curFrame, keyFrames[0], 1, 1);*/
-        //traverseModel(fox.root);
-        for(i = 0; i < fox.limbs.length; i++)
-        {
-            fox.limbs[i].transform = new mat4();
-            //fox.limbs[i].rotZ = 0;
-        }
-        fox.root.transform = new mat4();
-        /*var curmodel = copyModel(fox);
-        var curFrame = new keyFrame(curmodel);
-        easeInOut(fox, curFrame, keyFrames[0], 1, 1);
-        
-        //console.log("length : " + fox.limbs.length);
-        for(i = 0; i < fox.limbs.length; i++)
-        {
-            //console.log("i is: " + i);
-            fox.limbs[i].transform = new mat4();
-            fox.limbs[i].transform = mult (keyFrames[0].model.limbs[i].transform, fox.limbs[i].transform);
-        }
-        fox.root.transform = keyFrames[0].model.root.transform;
-        /*fox = copyModel(keyFrames[0].model);
-        fox.root.transform = new mat4();*/
-        traverseModel(fox.root);   
+
+        displayFrame(0);
         rewindToStart = false;
     }
-    if(f > 30 && index < keyFrames.length-2)
+    if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
     {
         index++;
+        selectedFrame = index;
         f=1;
     }
 
-    else if(f <= 30)
+    else if(f <= INBETWEENER_COUNT)
     {
-        easeInOut(fox, keyFrames[index], keyFrames[index+1], f, 30);
-        f = (f+1);
+        easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
+        f++;
         traverseModel(fox.root);
     }
     else {
-        var curmodel2 = new keyFrame(fox);
-        easeInOut(fox, curmodel2, keyFrames[0], 1, 1);
-        //traverseModel(fox.root);
-
-        for(i = 0; i < fox.limbs.length; i++)
-        {
-            fox.limbs[i].transform = new mat4();
-            //fox.limbs[i].rotZ = keyFrames[keyFrames.length-1].model.limbs[i].rotz;
-        }
-        fox.root.transform = new mat4();
-
-        traverseModel(fox.root);
-
-       /*var curmodel = copyModel(fox);
-        var curFrame = new keyFrame(curmodel);
-        easeInOut(fox, curFrame, keyFrames[0], 1, 1);*/
-        index = 0;
-        ndex = 0;
-        f=1;
-    rewindToStart = true;
-        //toggleAnimation();
+        displayFrame(0);
+        toggleAnimation();
     }
 }
 
-function addFrame(){
-    var frame = new keyFrame(copyModel(fox));
-    keyFrames.push(frame);
-    keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform
+function updateProg()
+{
+    document.getElementById("frame_counter").innerHTML =  (selectedFrame ) + " / " + (keyFrames.length);
+    document.getElementById("anim_bar").style.width = ((selectedFrame + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length ) * 100) + '%';
 }
 
-/*function addFrame(index){
+function addFrame(){
+
     var frame = new keyFrame(copyModel(fox));
-    keyFrames[index] = frame;
-}*/
+
+    if(selectedFrame >= keyFrames.length)
+    {
+        keyFrames.push(frame);
+        keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform;
+        selectedFrame++;
+    }
+    else
+    {
+        keyFrames[selectedFrame] = frame;
+        keyFrames[selectedFrame].model.root.transform = fox.root.transform;
+    }
+    updateProg();
+}
+
+function displayFrame(index)
+{
+    if(index < keyFrames.length && index >= 0)
+    {
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].rotZ = 0;
+        }
+        fox.root.transform = new  mat4();
+        fox.root.posX = 0;
+        fox.root.posY = 0;
+
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].transform = keyFrames[index].model.limbs[i].transform;
+        }
+        fox.root.transform = keyFrames[index].model.root.transform;
+
+        var curmodel = new keyFrame(fox);
+        easeInOut(fox, curmodel, keyFrames[index], 1, 1);
+        traverseModel(fox.root);
+
+        selectedFrame = index;
+    }
+    else if ( index == keyFrames.length )
+    {
+        for(i = 0; i < fox.limbs.length; i++)
+        {
+            fox.limbs[i].transform = new  mat4();
+            fox.limbs[i].rotZ = 0;
+        }
+        fox.root.transform = new  mat4();
+        fox.root.posX = 0;
+        fox.root.posY = 0;
+
+        traverseModel(fox.root);
+
+        selectedFrame = keyFrames.length;
+    }
+
+    updateProg();
+}
 
 //REFERENCE:https://stackoverflow.com/questions/10559660/how-can-i-build-a-json-string-in-javascript-jquery
 //REFERENCE:https://stackoverflow.com/questions/34156282/how-do-i-save-json-to-local-text-file
-function saveFrames(){
+function saveAnimation(){
     var savedKeyFrames = [];
     var str = "keyframe";
     var key = "";
@@ -680,7 +702,7 @@ function saveFrames(){
 }
 
 //REFERENCE: File API & FileReader API
-function loadFrames(){
+function loadAnimation(){
     var choosenKeyFramesList = loadButton.files[0];
     var reader = new FileReader();
     var contentText;
