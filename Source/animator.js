@@ -470,11 +470,11 @@ var f = 1;
 var play = false;
 var rewindToStart = true;
 var INBETWEENER_COUNT = 30;
-
+var typeAnimation = 0; //0 , 1: from load
 function render()
 {
     if(play){
-        playAnimation();
+        playAnimation(typeAnimation);
     }
     else
         traverseModel(fox.root);
@@ -582,28 +582,73 @@ function toggleAnimation(){
 }
 
 
-function playAnimation(){
-    if(rewindToStart){
 
-        displayFrame(0);
-        rewindToStart = false;
-    }
-    if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
-    {
-        index++;
-        selectedFrame = index;
-        f=1;
-    }
+function playAnimation(typeAnimation){
+    if(typeAnimation === 0){
+        if(rewindToStart){
+            displayFrame(0);
+            rewindToStart = false;
+        }
+        if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
+        {
+            index++;
+            selectedFrame = index;
+            f=1;
+        }
 
-    else if(f <= INBETWEENER_COUNT)
-    {
-        easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
-        f++;
-        traverseModel(fox.root);
+        else if(f <= INBETWEENER_COUNT)
+        {
+            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
+            f++;
+            traverseModel(fox.root);
+        }
+        else {
+            displayFrame(0);
+            toggleAnimation();
+        }
     }
-    else {
-        displayFrame(0);
-        toggleAnimation();
+    else if(typeAnimation === 1){
+        if(rewindToStart){
+            for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].transform = new mat4();
+            }
+            fox.root.transform = new mat4();
+            var curmodel = copyModel(fox);
+            traverseModel(fox.root);   
+            rewindToStart = false;
+        }
+        if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
+        {
+            index++;
+            selectedFrame = index;
+            f=1;
+        }
+
+        else if(f <= INBETWEENER_COUNT)
+        {
+            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
+            f++;
+            traverseModel(fox.root);
+        }
+        else {
+            var curmodel2 = new keyFrame(fox);
+            easeInOut(fox, curmodel2, keyFrames[0], 1, 1);
+            //traverseModel(fox.root);
+ 
+            for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].transform = new mat4();
+            }
+            fox.root.transform = new mat4();
+ 
+            traverseModel(fox.root);
+ 
+            index = 0;
+            f=1;
+            rewindToStart = true;
+            //toggleAnimation();
+        }
     }
 }
 
@@ -706,6 +751,8 @@ function loadAnimation(){
     var choosenKeyFramesList = loadButton.files[0];
     var reader = new FileReader();
     var contentText;
+    
+    typeAnimation = 1;
     
     reader.onload = function(){
         contentText = reader.result;
