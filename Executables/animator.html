@@ -79,7 +79,7 @@
     .slider::-moz-range-thumb {
         width: 25px;
         height: 25px;
-        background: #4CAF50;
+        background: rgb(13, 255, 21);
         cursor: pointer;
     }
 
@@ -92,7 +92,7 @@
     }
     
     .grid-item {
-        background-color: rgba(110, 226, 226, 0.8);
+        background-color: rgba(88, 240, 42, 0.8);
         border: 1px solid rgba(58, 111, 226, 0.8);
         padding: 20px;
         font-size: 9px;
@@ -113,22 +113,49 @@
         box-shadow: 0 2px rgba(38, 132, 219, 0.8);
         background-color: rgba(38, 132, 219, 0.8);
     }
+
+    .myProgress 
+    {
+        margin: auto;
+        width: 95%;
+        background-color: rgb(223, 219, 211);
+    }
+    .myBar {
+        width: 1%;
+        height: 10px;
+        background-color: rgba(88, 240, 42, 0.8);
+    }
+    .row
+    {
+        font-size: 9;
+        font-family:fantasy;
+        margin: 1%;
+        display: inline-block;
+    }
     </style>
 
 </head>
 <body>
     
     
-        <div align = "center"> <b> <font color="black" face="verdana" size = "6">The Fox Animator </font> </b></div>
+        <div align = "center"> <b> <font color="black" face="fantasy" size = "6">The Fox Animator </font> </b></div>
         <canvas id="gl-canvas" style= "width: 100%; height: 100%; display:grid; background: url('../Source/background.png')">
         Oops ... your browser doesn't support the HTML5 canvas element
         </canvas>
     
         <br>
+        <div class="myProgress" id = "anim_prog">
+            <div class="myBar" id = "anim_bar"></div>
+        </div>
+        <br>
         <input type = "button" class="buttonStyle" id="play_button" value="Play" onclick="toggleAnimation()">
         <input type = "button" class="buttonStyle" id="add_button" value="Add Frame" onclick="addFrame()">
-        <input type = "button" class="buttonStyle" id="save_button" value="Save Frames" onclick="saveFrames()">
-        <input type = "file"  id="load_button" value="Load Frames" onchange="loadFrames()">
+        <input type = "button" class="buttonStyle" id="save_button" value="Save Animation" onclick="saveAnimation()">
+        <input type = "file"  id="load_button" value="Load Animation" onchange="loadAnimation()">
+
+        <input type = "button" class="buttonStyle" id="prev_button" value="Previous Frame" onclick="displayFrame(selectedFrame-1)">
+        <input type = "button" class="buttonStyle" id="next_button" value="Next Frame" onclick="displayFrame(selectedFrame+1)">
+        <p class="row" id = "frame_counter">0 / 0</p> 
 
     <br>
     <br>
