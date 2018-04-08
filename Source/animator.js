@@ -462,6 +462,9 @@ window.onload = function init(){
     var foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
     fox = new model(m, foxT, torso, otherLimbs);
     
+    var frame = new keyFrame(fox); 
+    addFrame(frame);
+    
     render();
 }
 
@@ -493,7 +496,7 @@ function translateX(value){
     fox.root.posX = value;
     
     var m = fox.root.transform;
-    m = mult(m, translate(differenceInX,  differenceInY, fox.root.posZ));
+    m = mult(m, translate(-differenceInX,  differenceInY, fox.root.posZ));
 
     fox.root.transform = m;
     differenceInX = 0;
@@ -505,7 +508,7 @@ function translateY(value){
     fox.root.posY = value;
     
     var m = fox.root.transform;
-    m = mult(m, translate(differenceInX, differenceInY, fox.root.posZ));
+    m = mult(m, translate(-differenceInX, differenceInY, fox.root.posZ));
 
     fox.root.transform = m;
     differenceInY = 0;
@@ -546,7 +549,7 @@ var index = 0
 
 function toggleAnimation(){
 
-    if(keyFrames.length>=0)
+    if(keyFrames.length>=2)
     {
         play = !play;
         index = 0;
@@ -587,7 +590,26 @@ function toggleAnimation(){
 function playAnimation(typeAnimation){
     if(typeAnimation === 0){
         if(rewindToStart){
-            displayFrame(0);
+            for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].rotZ = 0;
+                fox.limbs[i].scaX = 1;
+                fox.limbs[i].scaY = 1;
+            }
+            //fox.root.transform = new  mat4();
+            fox.root.posX = 0;
+            fox.root.posY = 0;
+
+            var curmodel = new keyFrame(fox);
+            easeInOut(fox, curmodel, keyFrames[index], 1, 1);
+
+            for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].transform = keyFrames[index].model.limbs[i].transform;
+            }
+            fox.root.transform = keyFrames[index].model.root.transform;
+                
+            //traverseModel(fox.root);
             rewindToStart = false;
         }
         if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
@@ -599,13 +621,30 @@ function playAnimation(typeAnimation){
 
         else if(f <= INBETWEENER_COUNT)
         {
-            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
-            f++;
-            traverseModel(fox.root);
+            if(index < 1)
+            {
+                easeInOut(fox, keyFrames[index], keyFrames[index+1], 1, 1);
+                f = INBETWEENER_COUNT +1;
+                traverseModel(fox.root);
+            }
+            else
+            {
+
+                easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
+                f++;
+                traverseModel(fox.root);
+            }
         }
         else {
-            displayFrame(0);
             toggleAnimation();
+            for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].transform = new mat4();
+            }
+            fox.root.transform = new mat4();
+            traverseModel(fox.root);
+
+            displayFrame(keyFrames.length);
         }
     }
     else if(typeAnimation === 1){
@@ -655,8 +694,8 @@ function playAnimation(typeAnimation){
 
 function updateProg()
 {
-    document.getElementById("frame_counter").innerHTML =  (selectedFrame ) + " / " + (keyFrames.length);
-    document.getElementById("anim_bar").style.width = ((selectedFrame + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length ) * 100) + '%';
+    document.getElementById("frame_counter").innerHTML =  (selectedFrame -1 ) + " / " + (keyFrames.length -1);
+    document.getElementById("anim_bar").style.width = ((selectedFrame - 1 + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length -1 ) * 100) + '%';
 }
 
 function addFrame(){
@@ -681,7 +720,7 @@ function addFrame(){
 
 function displayFrame(index)
 {
-    if(index < keyFrames.length && index >= 0)
+    if(index < keyFrames.length && index >= 1)
     {
         for(i = 0; i < fox.limbs.length; i++)
         {
@@ -689,18 +728,19 @@ function displayFrame(index)
             fox.limbs[i].scaX = 1;
             fox.limbs[i].scaY = 1;
         }
-        fox.root.transform = new  mat4();
+        //fox.root.transform = new  mat4();
         fox.root.posX = 0;
         fox.root.posY = 0;
+
+        var curmodel = new keyFrame(fox);
+        easeInOut(fox, curmodel, keyFrames[index], 1, 1);
 
         for(i = 0; i < fox.limbs.length; i++)
         {
             fox.limbs[i].transform = keyFrames[index].model.limbs[i].transform;
         }
         fox.root.transform = keyFrames[index].model.root.transform;
-
-        var curmodel = new keyFrame(fox);
-        easeInOut(fox, curmodel, keyFrames[index], 1, 1);
+        
         traverseModel(fox.root);
 
         selectedFrame = index;
@@ -709,7 +749,7 @@ function displayFrame(index)
     {
         for(i = 0; i < fox.limbs.length; i++)
         {
-            fox.limbs[i].transform = new  mat4();
+            //fox.limbs[i].transform = new  mat4();
             fox.limbs[i].rotZ = 0;
             fox.limbs[i].scaX = 1;
             fox.limbs[i].scaY = 1;

@@ -106,7 +106,7 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
 
             var m = model.root.transform;
             console.log(m);
-            model.root.transform = mult(m, translate((k2T - k1T) * transformationVal, 0, 0));
+            model.root.transform = mult(m, translate((k2T - k1T) * - transformationVal, 0, 0));
     
             model.root.posX =(k2T - k1T) * transformationVal;
             console.log(model.root.posX);//NAN GELİYOR AMA NEDEN ???
