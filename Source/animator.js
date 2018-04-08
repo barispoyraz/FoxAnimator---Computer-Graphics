@@ -473,7 +473,7 @@ var INBETWEENER_COUNT = 30;
 var typeAnimation = 0; //0 , 1: from load
 function render()
 {
-    console.log("render: " + fox.root.posX);
+    //console.log("render: " + fox.root.posX);
     if(play){
         playAnimation(typeAnimation);
     }
@@ -493,7 +493,7 @@ function translateX(value){
     fox.root.posX = value;
     
     var m = fox.root.transform;
-    m = mult(m, translate(-differenceInX,  -differenceInY, fox.root.posZ));
+    m = mult(m, translate(differenceInX,  differenceInY, fox.root.posZ));
 
     fox.root.transform = m;
     differenceInX = 0;
@@ -505,7 +505,7 @@ function translateY(value){
     fox.root.posY = value;
     
     var m = fox.root.transform;
-    m = mult(m, translate(-differenceInX, - differenceInY, fox.root.posZ));
+    m = mult(m, translate(differenceInX, differenceInY, fox.root.posZ));
 
     fox.root.transform = m;
     differenceInY = 0;
@@ -780,7 +780,7 @@ function loadAnimation(){
         
         for(i = 0; i < contentToJSON.length; i++){
             key = str + i;
-            console.log("aaaaaa");
+            //console.log("aaaaaa");
             console.log(contentToJSON[i][key]);
             var model = contentToJSON[i][key];
             keyFrames.push(model);

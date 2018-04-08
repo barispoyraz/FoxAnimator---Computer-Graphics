@@ -87,6 +87,9 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                             m = mult(m, translate( model.limbs[i].posX, model.limbs[i].posY, 0))
                             m = mult (m, rotate(transformationVal * (k2T- k1T), 0, 0, 1)); 
                             model.limbs[i].transform =  mult(m, translate( -model.limbs[i].posX, -model.limbs[i].posY, 0))
+                       
+                            
+                            console.log(model.limbs[i].posX + ", " + model.limbs[i].posY);
         
                             model.limbs[i].rotZ = transformationVal * (k2T- k1T);
                         break;
@@ -103,9 +106,9 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
 
             var m = model.root.transform;
             console.log(m);
-            model.root.transform = mult(m, translate((-k2T + k1T) * transformationVal, 0, 0));
+            model.root.transform = mult(m, translate((k2T - k1T) * transformationVal, 0, 0));
     
-            model.root.posX =(-k2T + k1T) * transformationVal;
+            model.root.posX =(k2T - k1T) * transformationVal;
             console.log(model.root.posX);//NAN GELİYOR AMA NEDEN ???
         }
         
