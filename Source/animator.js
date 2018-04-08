@@ -464,6 +464,8 @@ window.onload = function init(){
     
     var frame = new keyFrame(fox); 
     addFrame(frame);
+
+    $("#foxScale").attr("disabled", true);
     
     render();
 }
@@ -476,7 +478,6 @@ var INBETWEENER_COUNT = 30;
 var typeAnimation = 0; //0 , 1: from load
 function render()
 {
-    //console.log("render: " + fox.root.posX);
     if(play){
         playAnimation(typeAnimation);
     }
@@ -574,7 +575,7 @@ function toggleAnimation(){
     else{
         $("#foxMovementinXaxis").attr("disabled", false);
         $("#foxMovementinYaxis").attr("disabled", false);
-        $("#foxScale").attr("disabled", false);
+        $("#foxScale").attr("disabled", true);
         $("#body_rotation").attr("disabled", false);
         $("#head_rotation").attr("disabled", false);
         $("#neck_rotation").attr("disabled", false);
@@ -593,12 +594,12 @@ function playAnimation(typeAnimation){
             for(i = 0; i < fox.limbs.length; i++)
             {
                 fox.limbs[i].rotZ = 0;
-                fox.limbs[i].scaX = 1;
-                fox.limbs[i].scaY = 1;
             }
             //fox.root.transform = new  mat4();
             fox.root.posX = 0;
             fox.root.posY = 0;
+            fox.root.scaX = 1;
+            fox.root.scaY = 1;
 
             var curmodel = new keyFrame(fox);
             easeInOut(fox, curmodel, keyFrames[index], 1, 1);
@@ -687,15 +688,14 @@ function playAnimation(typeAnimation){
             index = 0;
             f=1;
             rewindToStart = true;
-            //toggleAnimation();
         }
     }
 }
 
 function updateProg()
 {
-    document.getElementById("frame_counter").innerHTML =  (selectedFrame -1 ) + " / " + (keyFrames.length -1);
-    document.getElementById("anim_bar").style.width = ((selectedFrame - 1 + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length -1 ) * 100) + '%';
+    document.getElementById("frame_counter").innerHTML =  (selectedFrame ) + " / " + (keyFrames.length -1 );
+    document.getElementById("anim_bar").style.width = ((selectedFrame -1 + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length -1) * 100) + '%';
 }
 
 function addFrame(){
@@ -706,14 +706,12 @@ function addFrame(){
     {
         keyFrames.push(frame);
         keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform;
-        keyFrames[keyFrames.length-1].model.root.posX = fox.root.posX;
         selectedFrame++;
     }
     else
     {
         keyFrames[selectedFrame] = frame;
         keyFrames[selectedFrame].model.root.transform = fox.root.transform;
-        keyFrames[keyFrames.length-1].model.root.posX = fox.root.posX;
     }
     updateProg();
 }
@@ -728,7 +726,6 @@ function displayFrame(index)
             fox.limbs[i].scaX = 1;
             fox.limbs[i].scaY = 1;
         }
-        //fox.root.transform = new  mat4();
         fox.root.posX = 0;
         fox.root.posY = 0;
 
@@ -751,12 +748,12 @@ function displayFrame(index)
         {
             //fox.limbs[i].transform = new  mat4();
             fox.limbs[i].rotZ = 0;
-            fox.limbs[i].scaX = 1;
-            fox.limbs[i].scaY = 1;
         }
         fox.root.transform = new  mat4();
         fox.root.posX = 0;
         fox.root.posY = 0;
+        fox.root.scaX = 1;
+        fox.root.scaY = 1;
 
         traverseModel(fox.root);
 
