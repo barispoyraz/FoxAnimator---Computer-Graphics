@@ -1,6 +1,6 @@
 function keyFrame(aModel)
 {
-    this.model = aModel;
+    this.model = copyModel(aModel);
 }
 
 //
@@ -9,9 +9,10 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
     if(framenum <= inbetweenerCount)
     {
         var t1 = framenum/inbetweenerCount;
-        var transformationVal = t1*t1/(2.0 * (t1*t1-t1)+ 1.0);
+        var y2 = t1*t1/(2.0 * (t1*t1-t1)+ 1.0);
         var t2 = (framenum-1)/inbetweenerCount;
-        transformationVal =(t2*t2/(2.0 * (t2*t2-t2)+ 1.0)) - transformationVal;
+        var y1 = (t2*t2/(2.0 * (t2*t2-t2)+ 1.0))
+        var transformationVal = y1 - y2;
         var k1T;
         var k2T;
         var m;
@@ -65,17 +66,20 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                     switch(j)
                     {
                         case 0:
-                            m = model.root.transform;
-                            //console.log(m);
-                            m = translate((- k2T + k1T) * transformationVal  , 0, 0);
-                            model.root.transform = m;
-
-                            model.root.posX =(- k2T + k1T) * transformationVal;
                         break;
                         case 1:
                         break;
                         case 6:
                         case 7:
+                            /*m = model.limbs[i].transform;
+                            var scaleConst = (-k2T+k1T) / transformationVal;
+                            m = mult(m, scale4(scaleConst, scaleConst , 1));
+                            model.limbs[i].transform = m;
+
+                            model.limbs[i].scaX = scaleConst;
+                            //console.log(model.limbs[i].scaX);
+                            model.limbs[i].scaY = scaleConst;*/
+
                         break;
 
                         default:
@@ -89,6 +93,20 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                     }
                 }
             }    
+        }
+
+        k1T = keyFrame1.model.root.posX;
+        k2T = keyFrame2.model.root.posX;
+        console.log(transformationVal);
+        if(k1T != k2T)
+        {
+
+            var m = model.root.transform;
+            console.log(m);
+            model.root.transform = mult(m, translate((-k2T + k1T) * transformationVal, 0, 0));
+    
+            model.root.posX =(-k2T + k1T) * transformationVal;
+            console.log(model.root.posX);//NAN GELİYOR AMA NEDEN ???
         }
         
     }

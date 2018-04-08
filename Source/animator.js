@@ -403,7 +403,7 @@ window.onload = function init(){
     leftFrontPaw = new limb(m, leftFrontPawT, drawFrontPaws, null);
 
     var rightFrontPawT = new transformValues (-1.5, -3.4,0,0,0,0,1,1,0);
-    rightFrontPaw = new limb(translate(0,0,-0.0001), rightFrontPawT, drawFrontPaws, null);
+    rightFrontPaw = new limb(m, rightFrontPawT, drawFrontPaws, null);
 
 
     var leftFrontLowerLegT = new transformValues (-1.5,-2,0,0,0,0,1,1,0);
@@ -473,6 +473,7 @@ var INBETWEENER_COUNT = 30;
 var typeAnimation = 0; //0 , 1: from load
 function render()
 {
+    console.log("render: " + fox.root.posX);
     if(play){
         playAnimation(typeAnimation);
     }
@@ -666,12 +667,14 @@ function addFrame(){
     {
         keyFrames.push(frame);
         keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform;
+        keyFrames[keyFrames.length-1].model.root.posX = fox.root.posX;
         selectedFrame++;
     }
     else
     {
         keyFrames[selectedFrame] = frame;
         keyFrames[selectedFrame].model.root.transform = fox.root.transform;
+        keyFrames[keyFrames.length-1].model.root.posX = fox.root.posX;
     }
     updateProg();
 }
@@ -683,6 +686,8 @@ function displayFrame(index)
         for(i = 0; i < fox.limbs.length; i++)
         {
             fox.limbs[i].rotZ = 0;
+            fox.limbs[i].scaX = 1;
+            fox.limbs[i].scaY = 1;
         }
         fox.root.transform = new  mat4();
         fox.root.posX = 0;
@@ -706,6 +711,8 @@ function displayFrame(index)
         {
             fox.limbs[i].transform = new  mat4();
             fox.limbs[i].rotZ = 0;
+            fox.limbs[i].scaX = 1;
+            fox.limbs[i].scaY = 1;
         }
         fox.root.transform = new  mat4();
         fox.root.posX = 0;

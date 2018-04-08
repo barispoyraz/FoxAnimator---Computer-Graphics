@@ -91,8 +91,8 @@ function copyLimb(aLimb){
         children[i] = child;
         i++;
     }
-    /*var m = new mat4();
-    var t = mult(m, aLimb.transform);*/
+    var m = new mat4();
+    //var t = mult(m, aLimb.transform);
     rtn = new limb(new mat4(), cT, aLimb.draw, children);
 
     return rtn;
@@ -128,8 +128,9 @@ function copyModel(aModel){
     }
 
     //var root = copyLimb(aModel.root);
+    var  x = aModel.transform;
 
-    rtn = new model(aModel.transform, cT, limbs[3], limbs);
+    rtn = new model(x, cT, limbs[3], limbs);
 
     return rtn;
 
