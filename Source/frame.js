@@ -100,15 +100,35 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
 
         k1T = keyFrame1.model.root.posX;
         k2T = keyFrame2.model.root.posX;
-        console.log(transformationVal);
-        if(k1T != k2T)
+        
+        k1Ty = keyFrame1.model.root.posY;
+        k2Ty = keyFrame2.model.root.posY;
+        
+        k1Sx = keyFrame1.model.root.scaX;
+        k2Sx = keyFrame1.model.root.scaX;
+        
+        k1Sy = keyFrame1.model.root.scaY;
+        k2Sy = keyFrame1.model.root.scaY;
+        
+        //console.log(transformationVal);
+        if(k1T != k2T || k1Ty != k2Ty)
         {
 
+            var m = torso.transform;
+    m = mult(m, scale4(scaleRate,  scaleRate, 1));
+            
+            
             var m = model.root.transform;
             console.log(m);
-            model.root.transform = mult(m, translate((k2T - k1T) * - transformationVal, 0, 0));
+            model.root.transform = mult(m, translate((k2T - k1T) * - transformationVal, (k2Ty - k1Ty) * - transformationVal, 0));
+            
+            //model.root.transform = mult(model.root.transform, scale4((k2Sx - k1Sx) / model.root.scaX, (k2Sy- k1Sy) / model.root.scaY, 0));
+            
     
             model.root.posX =(k2T - k1T) * transformationVal;
+            model.root.posY = (k2Ty - k1Ty) * transformationVal;
+            //model.root.scaX = (k2Sx - k1Sx);
+            //model.root.scaY = (k2Sy - k1Sy);
             console.log(model.root.posX);//NAN GELİYOR AMA NEDEN ???
         }
         

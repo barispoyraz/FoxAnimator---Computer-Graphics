@@ -508,7 +508,7 @@ function translateY(value){
     fox.root.posY = value;
     
     var m = fox.root.transform;
-    m = mult(m, translate(-differenceInX, differenceInY, fox.root.posZ));
+    m = mult(m, translate(+differenceInX, -differenceInY, fox.root.posZ));
 
     fox.root.transform = m;
     differenceInY = 0;
