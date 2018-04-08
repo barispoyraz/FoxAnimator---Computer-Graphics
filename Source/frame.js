@@ -70,15 +70,30 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                         case 1:
                         break;
                         case 6:
-                        case 7:
-                            /*m = model.limbs[i].transform;
-                            var scaleConst = (-k2T+k1T) / transformationVal;
-                            m = mult(m, scale4(scaleConst, scaleConst , 1));
-                            model.limbs[i].transform = m;
+                            /*m = model.root.transform;
+                            console.log(transformationVal);
+                            k1T = keyFrame1.model.root.scaX;
+                            k2T = keyFrame2.model.root.scaX;
+                            var scaleConst = (k2T-k1T) / -transformationVal;
+                            //console.log("scaleconst : " + scaleConst);
+                            m = mult(m, scale4(scaleConst, scaleConst, 1));
+                            model.root.transform = m;
 
-                            model.limbs[i].scaX = scaleConst;
-                            //console.log(model.limbs[i].scaX);
-                            model.limbs[i].scaY = scaleConst;*/
+                            model.root.scaX = scaleConst;*/
+                            break;
+                        case 7:
+                            /*m = model.root.transform;
+                            console.log(transformationVal);
+                            
+                            k1T = keyFrame1.model.root.scaY;
+                            k2T = keyFrame2.model.root.scaY;
+                            console.log("k1T: " + k1T + ", k2T: " + k2T);
+                            var scaleConst = (-k2T+k1T) / -transformationVal;
+                            console.log("scaleconst : " + scaleConst);
+                            m = mult(m, scale4(scaleConst ,scaleConst , 1));
+                            model.root.transform = m;
+
+                            model.root.scaY = scaleConst;*/
 
                         break;
 
@@ -105,26 +120,25 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
         k2Ty = keyFrame2.model.root.posY;
         
         k1Sx = keyFrame1.model.root.scaX;
-        k2Sx = keyFrame1.model.root.scaX;
+        k2Sx = keyFrame2.model.root.scaX;
         
         k1Sy = keyFrame1.model.root.scaY;
-        k2Sy = keyFrame1.model.root.scaY;
+        k2Sy = keyFrame2.model.root.scaY;
+        
         
         //console.log(transformationVal);
         if(k1T != k2T || k1Ty != k2Ty)
         {
-
-            var m = torso.transform;
-    m = mult(m, scale4(scaleRate,  scaleRate, 1));
             
             
             var m = model.root.transform;
             console.log(m);
             model.root.transform = mult(m, translate((k2T - k1T) * - transformationVal, (k2Ty - k1Ty) * - transformationVal, 0));
-            
+            //model.root.transform = mult(model.root.transform, scale4((k2Sx - k1Sx) * -transformationVal, (k2Sy - k1Sy) * -transformationVal, 0));
             //model.root.transform = mult(model.root.transform, scale4((k2Sx - k1Sx) / model.root.scaX, (k2Sy- k1Sy) / model.root.scaY, 0));
+        
             
-    
+            
             model.root.posX =(k2T - k1T) * transformationVal;
             model.root.posY = (k2Ty - k1Ty) * transformationVal;
             //model.root.scaX = (k2Sx - k1Sx);
