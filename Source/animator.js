@@ -490,7 +490,20 @@ function render()
 
 //---------------------SLIDER FUNCTIONS------------------------------
 
-//REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+/*
+* translateX(value)
+*
+* Parameters: value
+* value stores the value of the slider when there is an onchange event occurs
+*
+* Description: This function takes a value variable as a parameter which is the value of the Movement - X axis slider.
+* Then by using the reference below, it also stores the old value of the slider in the differenceInX variable to make the
+* translation of the fox in the x axis.
+*
+* References:
+* [1] https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+*
+*/
 function translateX(value){
 
     differenceInX =  fox.root.posX - value;
@@ -503,7 +516,20 @@ function translateX(value){
     differenceInX = 0;
 }
 
-//REFERENCE: https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+/*
+* translateY(value)
+*
+* Parameters: value
+* value stores the value of the slider when there is an onchange event occurs
+*
+* Description: This function takes a value variable as a parameter which is the value of the Movement - Y axis slider.
+* Then by using the reference below, it also stores the old value of the slider in the differenceInY variable to make the
+* translation of the fox in the y axis.
+*
+* References:
+* [1] https://stackoverflow.com/questions/31344723/onchanged-event-get-value-prior-to-changing-in-html-input-tag-type-range
+*
+*/
 function translateY(value){
     differenceInY =  fox.root.posY - value;
     fox.root.posY = value;
@@ -870,6 +896,16 @@ function loadAnimation(){
     }  
 }
 
+/*
+* initializeColors()
+*
+* Description: This function assigns colors to the limbs. Each of the limb has a 
+* different color array in order to change the buffer data while drawing the respective
+* limbs. These initialized color arrays are used in drawrectangle, drawEllipsoid and in
+* drawRTriangle functions by giving them as a parameter from the each of the draw functions
+* of limbs.
+*
+*/
 function initializeColors(){
     for(i = 0 ; i <= 3; i++)
         headColors.push(vec4(0.0, 0.0, 0.0, 1.0));
