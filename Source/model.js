@@ -1,3 +1,38 @@
+/*
+* Authors:Alper Şahıstan, Barış Poyraz
+* ID: 21501207, 21401952
+* CS465 Assignment 2 - Hierarchical Modeling: Modeling and Animating a Quadruped Animal
+* Instructor: Uğur Güdükbay
+* model.js
+* 
+* Description: This javascript file contains the essential functions
+* for our project. The functions in this file are related with
+* creating, copying our model and its limbs, and also traversing our
+* model. In order to have a hierarchy in the code and readability, we 
+* seperated these essential functions into these javascript file.
+*
+*/
+
+
+/*
+* transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez)
+*
+* Parameters: posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez
+* posx stores the position value of our model and each of the limbs in the x axis 
+* posy stores the position value of our model and each of the limbs in the y axis 
+* posz stores the position value of our model and each of the limbs in the z axis 
+* thetax stores the rotation value of our model and each of the limbs in the x axis
+* thetay stores the rotation value of our model and each of the limbs in the y axis
+* thetaz stores the rotation value of our model and each of the limbs in the z axis
+* scalex stores the scale ratio of our model and each of the limbs in the x axis
+* scaley stores the scale ratio of our model and each of the limbs in the y axis
+* scalez stores the scale ratio of our model and each of the limbs in the z axis
+*
+* Description: This function is a parameter to our model and limbs constructor. In order
+* to make things easier we seperated the values so that we create transformValues type object
+* and pass that object to our model and limbs constructor.
+*
+*/
 function transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scaley, scalez)
 {
     this.posx = posx;
@@ -13,11 +48,20 @@ function transformValues(posx, posy, posz, thetax, thetay, thetaz, scalex, scale
     this.scalez = scalez;
 }
 
-/*limb object holds 
-*a transform matrix called transform,
-*a transformValues object for slider control and individual transform values
-*a render/draw method
-*a list of its childen
+/*
+* limb(transform, transformVal, renderMethod, children)
+*
+* Parameters: transform, transformVal, renderMethod, children
+* transform stores a transform matrix
+* transformVal stores the individual transform values and also it is used to control the sliders
+* renderMethod is the draw function of the respective limb
+* children stores a list of its children (they are also limb objects)
+*
+* Description: This function creates limb object from the given parameters.
+* Initially, the transform variable is a new mat4() instance, however the main
+* importance of that variable is to control the rotations, positions, scaling to
+* that limb and to its children.
+*
 */
 function limb(transform, transformVal, renderMethod, children)
 {  
@@ -75,6 +119,21 @@ function limb(transform, transformVal, renderMethod, children)
         this.children.push(arguments[i]);
 }
 
+/*
+* copyLimb(aLimb)
+*
+* Parameters: aLimb
+* aLimb is a limbs object that is to be copied by the copy constructor
+*
+* Description: This function is a copy constructor for the limb objects.
+* This function is created in order to create keyframes by capturing the model
+* and its limbs at that time. Since using the original values of the model affects the 
+* general model, this function is used to make keyframes apply the changes. It takes
+* all the transformationValues of the limbs object and creates its own transformValues object.
+* Then recursively, it calls its children to apply the same logic. At the end, this function returns
+* our copy constructed limb.
+*
+*/
 function copyLimb(aLimb){
     var rtn;
 
@@ -98,6 +157,20 @@ function copyLimb(aLimb){
     return rtn;
 }
 
+/*
+* model(transform, transformVal, rootLimb, limbs)
+*
+* Parameters:
+* transform stores the transformation matrix
+* transformVal contains the transformValues object of that model
+* rootLimb contains the root object of the limb hierarchy, which in our case is the torso
+* limbs is an array which contains all the limb objects
+*
+* Description: This function is the constructor for our model which in our case is the fox
+* Within model, it have root and limbs, root is the limb object for the model, so that the model
+* can act like a limb.
+* 
+*/
 function model(transform, transformVal, rootLimb, limbs)
 {
 
@@ -108,6 +181,20 @@ function model(transform, transformVal, rootLimb, limbs)
     
 }
 
+/*
+* copyModel(aModel)
+*
+* Parameters: aModel
+* aModel is the model object that is to be copied within this function
+*
+* Description: This function is the copy constructor for the model object.
+* The purpose of this function is same with the copyLimbs function. At first,
+* this function creates a transformValues object by getting the values from the 
+* parameter. Then, within a loop, it calls the copyLimb function in order copy
+* the limbs as well. At the end, it creates a new model object but with same values 
+* as in the parameter one, and it returns this model.
+*
+*/
 function copyModel(aModel){
     var rtn;
     var i =0;
@@ -136,6 +223,19 @@ function copyModel(aModel){
 
 }
 
+/*
+* traverseModel(root)
+*
+* Parameters: root
+* root is the limb that acts like a model
+*
+* Description: This function traverses through the children,
+* and apply the transformations to all the root's children.
+* The affect on limbs depend on the parameter since,
+* it calls itself and its children draw functions. Recursively, the 
+* children calls themselves and their children as well.
+*
+*/
 function traverseModel(root)
 {
 

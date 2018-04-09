@@ -1,10 +1,55 @@
+/*
+* Authors:Alper Şahıstan, Barış Poyraz
+* ID: 21501207, 21401952
+* CS465 Assignment 2 - Hierarchical Modeling: Modeling and Animating a Quadruped Animal
+* Instructor: Uğur Güdükbay
+* frame.js
+*
+* Description: This javascript file contains the essential
+* functions for the animation. There are two functions in this
+* file. keyFrame function creates a keyFrame object by copying
+* the model given as a parameter. The easeInOut function does
+* the animation affect by taking two keyFrames the model, framenum 
+* and inbetweenerCount as parameters, and animates the translations,
+* rotations and scaling between those keyframes.
+*
+*/
+
 var flag = true;
+
+/*
+* keyFrame(aModel)
+*
+* Parameters: aModel
+* aModel is the model that is going to be stored as a keyFrame
+*
+* Description: This function takes a model object parameter,
+* and calls copyModel function from the model.js file in order 
+* to create an exact representation of the model by using a copy constructor
+*
+*/
 function keyFrame(aModel)
 {
     this.model = copyModel(aModel);
 }
 
-//
+/*
+* easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
+*
+* Parameters: model, keyFrame1, keyFrame2, framenum, inbetweenerCount
+* model stores the original model, which in our case is the fox
+* keyFrame1 is one of the models from the keyFrames array
+* keyFrame2 is one of the models from the keyFrames array
+* framenum is the number used in animation
+* inbetweenerCount is the number of frames to be used
+*
+* Description: This function uses the 5 parameters above in order to create
+* the easeInOut animation which is the function that is assigned to y2 and y1
+* variables. The function uses that generated number in order to animate the 
+* translation, rotation and scaling between two keyframes with respect to the
+* framenum and inbetweenerCount.
+*
+*/
 function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
 {
     if(framenum <= inbetweenerCount)
@@ -71,27 +116,8 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
                         case 1:
                         break;
                         case 6:
-                            /*m = model.limbs[i].transform;
-                            console.log("aaaaaaaa");
-                            var scaleConst = (k2T-k1T) * transformationVal;
-                            console.log("scaleconst : " + scaleConst);
-                            m = mult(m, scale4(2, 2, 1));
-                            model.limbs[i].transform = m;
-
-                            model.limbs[i].scaX = scaleConst;
-                            model.limbs[i].scaY = scaleConst;*/
-                            break;
+                        break;
                         case 7:
-                            /*m = model.root.transform;
-                            console.log(transformationVal);
-                            var scaleConst = (k2T/k1T) * transformationVal ;
-                            console.log("scaleconst : " + scaleConst);
-                            m = mult(m, scale4(scaleConst, scaleConst, 1));
-                            model.root.transform = m;
-
-                            model.root.scaX = scaleConst;
-                            model.root.scaY = scaleConst;*/
-
                         break;
 
                         default:

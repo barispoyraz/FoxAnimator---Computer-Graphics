@@ -1,8 +1,9 @@
 /*
 *Authors:Alper Şahıstan, Barış Poyraz
 *IDs: 21501207, 21401952(Respectively)
-*CS465 Assignment 2 - The Fox Animator
+*CS465 Assignment 2 - Hierarchical Modeling: Modeling and Animating a Quadruped Animal
 *Instructor: Uğur Güdükbay
+*animator.js
 *
 *Description: A animation program that animates a quadruped animal(in this case a fox).
 *Features:  -KeyFrame interpolation between Key frames using a easy In/Out for natural movements.
@@ -592,6 +593,15 @@ function translateY(value){
 
 var scaleRate = 1;
 
+/*
+* scale(value)
+* value stores the value of the slider when there is an onchange event occurs
+*
+* Description: This function takes a value variable as a parameter which is the value of the Scaling slider.
+* The function uses this value and the roots scale value in x axis to calculate the scaleRate, which then
+* is used to scale the model.
+*
+*/
 function scale(value)
 {
     scaleRate = value / fox.root.scaX ;
@@ -605,6 +615,20 @@ function scale(value)
     scaleRate = 1;
 }
 
+/*
+* rotateLimb(aLimb, offsetX, offsetY, value)
+*
+* Parameters: aLimb, offsetX, offsetY, value
+* aLimb is a limbs object
+* offsetX is an optional value to shift the objet in x axis. Default: 0
+* offsetY is an optional value to shift the object in y axis. Default: 0
+* value is the value from the slider when there is an onchange event occurs
+*
+* Description: This function uses the above parameters, especially the limb object
+* and the value parameters to rotate the limb. This function is a general rotation
+* function which rotates any limb within a change in their sliders.
+*
+*/
 function rotateLimb(aLimb, offsetX, offsetY, value)
 {
     var rot = (aLimb.rotZ - value); 
