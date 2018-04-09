@@ -1,3 +1,4 @@
+var flag = true;
 function keyFrame(aModel)
 {
     this.model = copyModel(aModel);
@@ -122,33 +123,31 @@ function easeInOut(model, keyFrame1, keyFrame2, framenum, inbetweenerCount)
         if(k1Tx != k2Tx || k1Ty != k2Ty)
         {
             
-            
+            console.log("aa");
             var m = model.root.transform;
-            model.root.transform = mult(m, translate((k2T - k1T) * - transformationVal, (k2Ty - k1Ty) * - transformationVal, 0));
+            model.root.transform = mult(m, translate((k2Tx - k1Tx) * - transformationVal, (k2Ty - k1Ty) * - transformationVal, 0));
         
             model.root.posX =(k2T - k1T) * transformationVal;
             model.root.posY = (k2Ty - k1Ty) * transformationVal;
         }
 
-        if(k1S != k2S && y1 < 0.999)
+        if(k1S != k2S && flag)
         {
             m = model.root.transform;
             console.log(transformationVal);
-            var scaleConst = (k2S-k1S) * y1 + k1S;
+            var scaleConst = (k2S-k1S);
             console.log("scaleconst : " + scaleConst);
-            m = mult(m, scale4(scaleConst, scaleConst, 1));
+            m = mult(m, scale4(k2S, k2S, 1));
             model.root.transform = m;
 
             model.root.scaX = scaleConst;
             model.root.scaY = scaleConst;
+            flag = false; 
         }
-        else
+
+        if (y2 == 1)
         {
-            m = model.root.transform;
-            var scaleConst = 1;
-            //console.log("scaleconst : " + scaleConst);
-            m = mult(m, scale4(scaleConst, scaleConst, 1));
-            model.root.transform = m;
+            flag = true;
         }
         
     }

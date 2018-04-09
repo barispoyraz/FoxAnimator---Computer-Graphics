@@ -465,7 +465,7 @@ window.onload = function init(){
     var frame = new keyFrame(fox); 
     addFrame(frame);
 
-    $("#foxScale").attr("disabled", true);
+    //$("#foxScale").attr("disabled", true);
     
     render();
 }
@@ -561,6 +561,8 @@ function toggleAnimation(){
     
     //REFERENCE: https://stackoverflow.com/questions/9445792/uncaught-exception-cannot-call-methods-on-slider-prior-to-initialization-attem
     if(play){
+        document.body.style.backgroundColor = "#3f3f3f";
+        document.getElementById("frame_counter").style.color = "white";
         $("#foxMovementinXaxis").attr("disabled", true);
         $("#foxMovementinYaxis").attr("disabled", true);
         $("#foxScale").attr("disabled", true);
@@ -570,18 +572,24 @@ function toggleAnimation(){
         $("#mouth_rotation").attr("disabled", true);
         $("#legs_rotation").attr("disabled", true);
         $("#tailBaseChange").attr("disabled", true);
+        $("#prev_button").attr("disabled", true);
+        $("#next_button").attr("disabled", true);
         document.getElementById("play_button").value= "Stop";
     }
     else{
+        document.body.style.backgroundColor = "white";
+        document.getElementById("frame_counter").style.color = "black";
         $("#foxMovementinXaxis").attr("disabled", false);
         $("#foxMovementinYaxis").attr("disabled", false);
-        $("#foxScale").attr("disabled", true);
+        $("#foxScale").attr("disabled", false);
         $("#body_rotation").attr("disabled", false);
         $("#head_rotation").attr("disabled", false);
         $("#neck_rotation").attr("disabled", false);
         $("#mouth_rotation").attr("disabled", false);
         $("#legs_rotation").attr("disabled", false);
         $("#tailBaseChange").attr("disabled", false);
+        $("#prev_button").attr("disabled", false);
+        $("#next_button").attr("disabled", false);
         document.getElementById("play_button").value= "Play";     
     }
 }
@@ -668,9 +676,19 @@ function playAnimation(typeAnimation){
 
         else if(f <= INBETWEENER_COUNT)
         {
-            easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
-            f++;
-            traverseModel(fox.root);
+            if(index < 1)
+            {
+                easeInOut(fox, keyFrames[index], keyFrames[index+1], 1, 1);
+                f = INBETWEENER_COUNT +1;
+                traverseModel(fox.root);
+            }
+            else
+            {
+
+                easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
+                f++;
+                traverseModel(fox.root);
+            }
         }
         else {
             var curmodel2 = new keyFrame(fox);
@@ -720,6 +738,14 @@ function displayFrame(index)
 {
     if(index < keyFrames.length && index >= 1)
     {
+        
+        for(i = 0; i < fox.limbs.length; i++)
+            {
+                fox.limbs[i].transform = new mat4();
+            }
+            fox.root.transform = new mat4();
+ 
+
         for(i = 0; i < fox.limbs.length; i++)
         {
             fox.limbs[i].rotZ = 0;
@@ -732,21 +758,13 @@ function displayFrame(index)
         var curmodel = new keyFrame(fox);
         easeInOut(fox, curmodel, keyFrames[index], 1, 1);
 
-        for(i = 0; i < fox.limbs.length; i++)
-        {
-            fox.limbs[i].transform = keyFrames[index].model.limbs[i].transform;
-        }
-        fox.root.transform = keyFrames[index].model.root.transform;
-        
-        traverseModel(fox.root);
-
         selectedFrame = index;
     }
     else if ( index == keyFrames.length )
     {
         for(i = 0; i < fox.limbs.length; i++)
         {
-            //fox.limbs[i].transform = new  mat4();
+            fox.limbs[i].transform = new  mat4();
             fox.limbs[i].rotZ = 0;
         }
         fox.root.transform = new  mat4();
