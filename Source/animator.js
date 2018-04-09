@@ -4,6 +4,7 @@ ID: 21501207, 21401952
 CS465 Assignment 2 - The Fox Animator
 */
 
+//-------Global Variables--------
 var gl;
 var canvas;
 
@@ -21,6 +22,7 @@ rectangularVertices =
     vec4( 0.5, -0.5,  0, 1.0 ),
 ];
 
+//Limb Variables
 var fox;
 
 var Head;
@@ -60,9 +62,10 @@ var projectionMatrix;
 var modelViewMatrix;
 var modelViewMatrixLoc;
 
+//Color variables
 var colorsArray = [];
 
-var headColors = [];    //-
+var headColors = [];    
 var noseColors = [];
 var noseTipColors = [];
 var leftEarColors = [];
@@ -70,14 +73,14 @@ var rightEarColors = [];
 
 var mouthColors = [];
 
-var torsoLowerPoints = []; //-
-var torsoLowerColors = []; //-
+var torsoLowerPoints = []; 
+var torsoLowerColors = [];
 
-var torsoUpperPoints = []; //-
-var torsoUpperColors = []; //-
+var torsoUpperPoints = []; 
+var torsoUpperColors = []; 
 
-var neckPoints = []; //-
-var neckColors = []; //-
+var neckPoints = []; 
+var neckColors = [];
 
 var frontUpperLegColors = [];
 var rearUpperLegColors = [];
@@ -85,14 +88,15 @@ var rearUpperLegColors = [];
 var frontLowerLegColors = [];
 var rearLowerLegColors = [];
 
-var frontPawColors = []; //-
-var rearPawColors = []; //-
+var frontPawColors = []; 
+var rearPawColors = []; 
 
-var tailBaseColors = []; //-
-var tailBodyColors = []; //-
-var tailTipColors = []; //-
+var tailBaseColors = []; 
+var tailBodyColors = []; 
+var tailTipColors = []; 
 var tailTipTipColors = [];
 
+//Slider Variables
 var previousSliderValueInX = 0;
 var differenceInX = 0;
 
@@ -574,6 +578,17 @@ function rotateLimb(aLimb, offsetX, offsetY, value)
 
 var index = 0
 
+/*
+* toggleAnimation()
+*
+* Description: This function is called when the play button is clicked and also it is called in the playAnimation function.
+* The main aim of this function is to play and stop the animation. Also by using the reference below, this function checks for 
+* a global variable, and as a result it either enables or disables the sliders to be interacted by the user.
+*
+* References:
+* [1] https://stackoverflow.com/questions/9445792/uncaught-exception-cannot-call-methods-on-slider-prior-to-initialization-attem
+*
+*/
 function toggleAnimation(){
 
     if(keyFrames.length>=2)
@@ -584,8 +599,6 @@ function toggleAnimation(){
         rewindToStart = true;
     }
     
-    
-    //REFERENCE: https://stackoverflow.com/questions/9445792/uncaught-exception-cannot-call-methods-on-slider-prior-to-initialization-attem
     if(play){
         document.body.style.backgroundColor = "#3f3f3f";
         document.getElementById("frame_counter").style.color = "white";
