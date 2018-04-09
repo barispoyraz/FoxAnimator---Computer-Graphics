@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vColor;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        
+        varying vec4 fColor;
+    void main(){
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        fColor = vColor;
+    }
+</script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    precision highp float;
+
+    precision mediump float;
+    varying vec4 fColor;
+
+    void main(){
+        gl_FragColor = fColor;
+    }
+</script>
+    
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+    
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
+    
+
+<script type="text/javascript" src="../Source/webgl-utils.js"></script>
+<script type="text/javascript" src="../Source/initShaders.js"></script>
+<script type="text/javascript" src="../Source/MV.js"></script>
+<script type="text/javascript" src="../Source/w3.js"></script>
+<script type="text/javascript" src="../Source/model.js"></script>
+<script type="text/javascript" src="../Source/frame.js"></script>
+    
+    
+    
+
+  <!--Source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_rangeslider-->
+  <style>
+    .slidecontainer {
+        width: 100%;
+    }
+    
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 15px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+    
+    .slider:hover {
+        opacity: 1;
+    }
+    
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: rgb(38, 132, 219);
+        cursor: pointer;
+    }
+    
+    .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: rgb(13, 255, 21);
+        cursor: pointer;
+    }
+
+    .grid-container {
+        display: inline-grid;
+        grid-template-columns: 25% 25% 25% 25%;
+        background-color: rgb(38, 132, 219);
+        padding: 5px;
+        width: 100%;
+    }
+    
+    .grid-item {
+        background-color: rgba(88, 240, 42, 0.8);
+        border: 1px solid rgba(58, 111, 226, 0.8);
+        padding: 20px;
+        font-size: 9px;
+        text-align: center;
+    }
+
+      /*Reference: https://www.w3schools.com/howto/howto_css_animate_buttons.asp */
+    .buttonStyle {
+        background-color: rgba(38, 132, 219, 0.8);  
+        border: 3px solid rgba(0, 0, 0, 0.8);
+        padding: 15px 50px;
+        font-size: 14px;
+        text-align: center;
+        font-family:fantasy;
+        cursor: pointer;
+    }
+      
+    .buttonStyle:active {
+        box-shadow: 0 2px rgba(27, 59, 88, 0.8);
+        background-color: rgba(38, 132, 219, 0.8);
+    }
+
+    .myProgress 
+    {
+        margin: auto;
+        width: 95%;
+        background-color: rgb(223, 219, 211);
+    }
+    .myBar {
+        width: 1%;
+        height: 10px;
+        background-color:rgba(88, 240, 42, 1);
+    }
+    .row
+    {
+        font-size: 9;
+        font-family:fantasy;
+        margin: 1%;
+        display: inline-block;
+    }
+    </style>
+
+</head>
+<body>
+    
+    
+        <div align = "center"> <b> <font color="black" face="fantasy" size = "6">The Fox Animator </font> </b></div>
+        <canvas id="gl-canvas" style= "width: 100%; height: 100%; display:grid; background: url('../Source/background.png')">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    
+        <br>
+        <div class="myProgress" id = "anim_prog">
+            <div class="myBar" id = "anim_bar"></div>
+        </div>
+        <br>
+        <input type = "button" class="buttonStyle" id="play_button" value="Play" onclick="toggleAnimation()">
+        <input type = "button" class="buttonStyle" id="add_button" value="Add Frame" onclick="addFrame()">
+        <input type = "button" class="buttonStyle" id="save_button" value="Save Animation" onclick="saveAnimation()">
+        <input type = "file"  id="load_button" value="Load Animation" onchange="loadAnimation()">
+
+        <input type = "button" class="buttonStyle" id="prev_button" value="Previous Frame" onclick="displayFrame(selectedFrame-1)">
+        <input type = "button" class="buttonStyle" id="next_button" value="Next Frame" onclick="displayFrame(selectedFrame+1)">
+        <p class="row" id = "frame_counter">0 / 0</p> 
+
+    <br>
+    <br>
+    
+    <!---Reference: https://www.w3schools.com/howto/howto_js_accordion.asp !-->
+    <div class="grid-container">
+            <div class="grid-item">
+                <button class="accordion">General Transforms</button>
+                <div class="panel" style="display: none">
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Movement - X axis</p>
+                        <input id="foxMovementinXaxis" type="range" min="-24" max="21" step="0.1" class="slider" onInput="translateX(this.value)">
+                    </div>
+                    <br>
+            
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Movement - Y axis</p>
+                        <input id="foxMovementinYaxis" type="range" min="-10" max="10" step="0.1" class="slider" onInput="translateY(this.value)">
+                    </div>
+                    <br>
+            
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Scaling </p>
+                        <input id="foxScale" type="range" min="0.0001" max="2" step="0.001" class="slider"onInput="scale(this.value)">
+                    </div>
+                    <br>
+            
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Body Rotation</p>
+                        <input id="body_rotation" type="range" min="-180" max="180" step="0.1" class="slider" onInput="rotateLimb(torso, 0, 0, this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <button class="accordion">Upper Body Transformations</button>
+                <div class="panel" style="display: none">
+                    
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Head Rotation</p>
+                        <input id="head_rotation" type="range" min="0" max="52" step="0.1" class="slider" onInput="rotateLimb(Head, 0, 0, this.value)">
+                    </div>
+                
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Neck Rotation</p>
+                        <input id="neck_rotation" type="range" min="-70" max="25" step="0.1" class="slider" onInput="rotateLimb(neck, 0, 0, this.value)">
+                    </div>
+                    
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Mouth Rotation</p>
+                        <input id="mouth_rotation" type="range" min="-15" max="0" step="0.1" class="slider" onInput="rotateLimb(mouth, 0, 0, this.value)">
+                    </div>
+            
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <button class="accordion">Lower Body Transformations</button>
+                <div class="panel" style="display: none">
+                    <div class="grid-container" style = "grid-template-columns: 50% 50% ;">
+                        <div class="grid-item">
+                            <button class="accordion">Front Legs</button>
+                            <div class="panel" style="display: none">
+                                <button class="accordion">Right</button>
+                                <div class="panel" style="display: none">
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Upper Leg Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(rightFrontUpperLeg, 0, 0, this.value)">
+                                        </div>
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Lower Leg Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontLowerLeg, 0, 0,this.value)">
+                                        </div>
+                                
+                                        <div class ="slidecontainer" style="display: inline-block">
+                                            <p style="text-align: center">Paw Rotation</p>
+                                            <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightFrontPaw, 0, 0, this.value)">
+                                        </div>
+                                </div>
+                    
+                                <button class="accordion">Left</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="90" step="0.1" class="slider" onInput="rotateLimb(leftFrontUpperLeg, 0, 0, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-120" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontLowerLeg, 0, 0, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(leftFrontPaw, 0, 0, this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="grid-item">
+                            <button class="accordion">Rear Legs</button>
+                            <div class="panel" style="display: none">
+                                <button class="accordion">Right</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(rightRearUpperLeg, 0, 0, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-60" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearLowerLeg, 0, 0, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-45" max="45" step="0.1" class="slider" onInput="rotateLimb(rightRearPaw, 0, 0, this.value)">
+                                    </div>
+                                </div>
+                    
+                                <button class="accordion">Left</button>
+                                <div class="panel" style="display: none">
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Upper Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="50" step="0.1" class="slider" onInput="rotateLimb(leftRearUpperLeg, 0, 0, this.value)">
+                                    </div>
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Lower Leg Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="20" step="0.1" class="slider" onInput="rotateLimb(leftRearLowerLeg, 0, 0, this.value)">
+                                    </div>
+                            
+                                    <div class ="slidecontainer" style="display: inline-block">
+                                        <p style="text-align: center">Paw Rotation</p>
+                                        <input id="legs_rotation" type="range" min="-90" max="45" step="0.1" class="slider" onInput="rotateLimb(leftRearPaw, 0, 0, this.value)">
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                    </div>
+                        </div>
+                    </div>
+            <div class="grid-item">
+                <button class="accordion">Tail Transformations</button>
+                <div class="panel" style="display: none">
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Tail Base Change</p>
+                        <input id="tailBaseChange" type="range" min="-130" max="75" step="0.1" class="slider" onInput="rotateLimb(tailBase, 0, 0.0, this.value)">
+                    </div>
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Tail Body Change</p>
+                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailBody, 0, 0, this.value)">
+                    </div>
+                    <div class ="slidecontainer" style="display: inline-block">
+                        <p style="text-align: center">Tail Tip Change</p>
+                        <input id="tailBaseChange" type="range" min="-20" max="20" step="0.1" class="slider" onInput="rotateLimb(tailTip, 0, 0, this.value)">
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!--Reference: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion !-->
+    <!--Reference: https://www.w3schools.com/howto/howto_js_accordion.asp !-->
+    <script>
+        var accordion = document.getElementsByClassName("accordion");
+        var i;
+                 
+        for(i = 0; i < accordion.length; i++){
+            accordion[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block"){
+                panel.style.display = "none";
+            } 
+            else{
+                panel.style.display = "block";
+            }
+            });
+        }
+    
+    </script>
+        
+        
+</body>
+<script type="text/javascript" src="../Source/animator.js"></script>
+</html>
