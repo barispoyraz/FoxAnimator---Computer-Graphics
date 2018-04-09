@@ -781,8 +781,21 @@ function displayFrame(index)
     updateProg();
 }
 
-//REFERENCE:https://stackoverflow.com/questions/10559660/how-can-i-build-a-json-string-in-javascript-jquery
-//REFERENCE:https://stackoverflow.com/questions/34156282/how-do-i-save-json-to-local-text-file
+
+/*
+* saveAnimation()
+* 
+* Description: This function saves animations by storing each of the keyFrame objects as an element of a JSON 
+* type array. Each index in the array savedKeyFrames contains the individual keyFrame objects. By using the stringfy
+* function of JSON, it converts this array into a JSON type. Then by using the Blob API, and the references below,
+* it writes this JSON type variable to a text file and then downloads it. 
+*
+* References: 
+* [1] Blob API: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+* [2] https://stackoverflow.com/questions/10559660/how-can-i-build-a-json-string-in-javascript-jquery
+* [3] https://stackoverflow.com/questions/34156282/how-do-i-save-json-to-local-text-file
+* 
+*/
 function saveAnimation(){
     var savedKeyFrames = [];
     var str = "keyframe";
@@ -808,7 +821,20 @@ function saveAnimation(){
     a.click();
 }
 
-//REFERENCE: File API & FileReader API
+/*
+* loadAnimation()
+*
+* Description: This function loads the saved animations by loading the text file that is saved. To do this,
+* it uses the properties of File API and FileReader API. The input file is read by FileReader object, and 
+* since in the saveAnimation() function, we directly saved the keyframe objects as a JSON type array, in order to
+* parse the text file, this function traverses through the array and pushes the respective keyFrames into the keyFrames
+* array.
+*
+* References:
+* [1] File API: https://developer.mozilla.org/tr/docs/Web/API/File
+* [2] FileReader API: https://developer.mozilla.org/en-US/docs/Web/API/FileReader
+*
+*/
 function loadAnimation(){
     var choosenKeyFramesList = loadButton.files[0];
     var reader = new FileReader();
