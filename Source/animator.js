@@ -1,7 +1,15 @@
 /*
-Authors:Alper Şahıstan, Barış Poyraz
-ID: 21501207, 21401952
-CS465 Assignment 2 - The Fox Animator
+*Authors:Alper Şahıstan, Barış Poyraz
+*IDs: 21501207, 21401952(Respectively)
+*CS465 Assignment 2 - The Fox Animator
+*Instructor: Uğur Güdükbay
+*
+*Description: A animation program that animates a quadruped animal(in this case a fox).
+*Features:  -KeyFrame interpolation between Key frames using a easy In/Out for natural movements.
+*           -Slider and accordion based interface
+*           -Progress bar to indicate animation playing progress
+*           -Live display of the model 
+*           -Save/Load animation
 */
 
 //-------Global Variables--------
@@ -109,6 +117,11 @@ var selectedFrame = 0;
 
 var loadButton = document.getElementById("load_button");
 
+/*
+*Generates a scaling matrix using x,y,z dimensions
+*Refferences:
+*   Example figure.js code Provided in the Instructor's webpage:http://www.cs.bilkent.edu.tr/~gudukbay/cs465/
+*/
 function scale4(a, b, c) {
     var result = mat4();
     result[0][0] = a;
@@ -116,7 +129,10 @@ function scale4(a, b, c) {
     result[2][2] = c;
     return result;
  }
-
+/*Pushes a Vertices of a unit square
+*Refferences:
+*   Example figure.js code Provided in the Instructor's webpage:http://www.cs.bilkent.edu.tr/~gudukbay/cs465/
+*/
  function quad(a, b, c, d) {
 
      pointsArray.push(rectangularVertices[a]); 
@@ -125,6 +141,10 @@ function scale4(a, b, c) {
      pointsArray.push(rectangularVertices[d]);
        
 }
+/*Uses sin and cos functions to create and push vertices to Vertex buffer
+*Refferences:
+*   https://www.youtube.com/watch?v=S0QZJgNTtEw
+*/
 
 function ellipsoid()
 {
@@ -162,7 +182,6 @@ function drawrectangle(transform, colors)
 //---Forms a ellipsoid---
 function drawEllipsoid(transform, colors)
 {
-    //BURAYA BAK
     instanceMatrix = mult(modelViewMatrix, transform );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(instanceMatrix));
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
@@ -181,7 +200,6 @@ function drawRTriangle(transform, colors)
 }
 
 //-----RENDER METHODS FOR BODY PARTS-----
-
 //---Forms the Torso---
 function drawTorso()
 {
@@ -220,7 +238,7 @@ function drawRearUpperLeg()
     drawRTriangle(instanceMatrix, rearUpperLegColors);
 }
 
-//---Form the Front Lower Legs---
+//---Forms the Front Lower Legs---
 function drawFrontLowerLeg()
 {
     instanceMatrix = translate(-1.6, -2.6, 0.0);
@@ -228,7 +246,7 @@ function drawFrontLowerLeg()
     drawrectangle(instanceMatrix, frontLowerLegColors);
 }
 
-//---Form the Rear Lower Legs---
+//---Forms the Rear Lower Legs---
 function drawRearLowerLeg()
 {
     instanceMatrix = translate(3.4, -3.0, 0.0);
@@ -236,7 +254,7 @@ function drawRearLowerLeg()
     drawrectangle(instanceMatrix, rearLowerLegColors);
 }
 
-//---Form the Front Paws---
+//---Forms the Front Paws---
 function drawFrontPaws()
 {
     instanceMatrix = translate(-2.0, -3.5, 0.0);     
@@ -245,7 +263,7 @@ function drawFrontPaws()
     drawRTriangle(instanceMatrix, frontPawColors);
 }
 
-//---Form the Rear Paws---
+//---Forms the Rear Paws---
 function drawRearPaws()
 {
     instanceMatrix = translate(2.95, -3.7, 0.0);  
@@ -254,7 +272,7 @@ function drawRearPaws()
     drawRTriangle(instanceMatrix, rearPawColors);
 }
 
-//---Form the Tail Base---
+//---Forms the Tail Base---
 function drawTailBase()
 {
     instanceMatrix = translate(4.2, 0.7, 0);
@@ -263,7 +281,7 @@ function drawTailBase()
     drawEllipsoid(instanceMatrix, tailBaseColors);
 }
 
-//---Form the Tail Body---
+//---Forms the Tail Body---
 function drawTailBody()
 {
     instanceMatrix = translate(5.4, 0.7, 0.0);  
@@ -271,7 +289,7 @@ function drawTailBody()
     drawEllipsoid(instanceMatrix, tailBodyColors);
 }
 
-//---Form the Tail Tip---
+//---Forms the Tail Tip---
 function drawTailTip()
 {
     instanceMatrix = translate(7, 0.7, 0.0);  
@@ -285,7 +303,7 @@ function drawTailTip()
     drawRTriangle(instanceMatrix, tailTipTipColors);
 }
 
-//---Form the Head---
+//---Forms the Head---
 function drawHead()
 {
     instanceMatrix = translate(-3.5, 1.9, 0.0);
@@ -314,7 +332,7 @@ function drawHead()
 
 }
 
-//---Form the Mouth---
+//---Forms the Mouth---
 function drawMouth(){
     instanceMatrix = translate(-4.4, 1.07, 0.0);  
     instanceMatrix = mult(instanceMatrix, rotate(88, 0,0,1));
@@ -322,7 +340,12 @@ function drawMouth(){
     drawRTriangle(instanceMatrix, mouthColors);
 }
 
-//Source :https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
+
+/*Resize function called when browser screen is resized
+*Resizes the canvas and its contents with respect to it's witdth/heigth ratio
+*Refferences:
+*   https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
+*/
 function resize()
 {
     // Lookup the size the browser is displaying the canvas.
@@ -339,6 +362,19 @@ function resize()
     }
 }
 
+/*Initilization function called when screen is loaded
+*Sets Up canvas
+*Configures WebGL
+*Loads Shaders
+*Maps the Attributes and uniforms from shaders
+*Pushes Vertices of the Quad and the Ellipsoid
+*Creates all the limbs and theirs respective transformvalues
+*Attaches limbs to a Model object called fox
+*Puts the model into a frame object and pushes the frame into the keyFrames array
+*
+*References:
+*   Example figure.js code Provided in the Instructor's webpage:http://www.cs.bilkent.edu.tr/~gudukbay/cs465/
+*/
 window.onload = function init(){
     canvas = document.getElementById( "gl-canvas" );
 
@@ -368,31 +404,32 @@ window.onload = function init(){
 
     initializeColors();
     
+    //Color buffer for linear interpolated colors from each vertex.
     cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    //gl.bufferData( gl.ARRAY_BUFFER, flatten(noseColors), gl.STATIC_DRAW );
 
+    //Maps the Color attribute to variable
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
     
-    
+    //Pushes the Quad and the ellipsoid vertices to buffer 
     quad(0,1,2,3);
     ellipsoid();
     
+    //Vertex buffer
     vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
     gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
     
+    //Maps the vertex attribute to a variable
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vPosition );    
-
-    //look up for Attributes        
-    var vPosition = gl.getAttribLocation( program, "vPosition" );
+    gl.enableVertexAttribArray( vPosition );
     
     m = new mat4();
 
+    //---------Limbs and their Transform Values------------
     var mouthT = new transformValues (-3.3, 1.2,0,0,0,0,1,1,0); 
     mouth = new limb(m, mouthT, drawMouth, null);
 
@@ -462,24 +499,32 @@ window.onload = function init(){
          rightFrontLowerLeg, rightFrontPaw, leftRearUpperLeg,
          leftRearLowerLeg, leftRearPaw, rightRearUpperLeg,
          rightRearLowerLeg, rightRearPaw, tailBase, tailBody, tailTip];
-
+    
+    //Creates A Model called fox for the scene    
     var foxT = new transformValues (0,0,0,0,0,0,1,1,0); 
     fox = new model(m, foxT, torso, otherLimbs);
     
+    //Pushes the model in the initial Key Frame
     var frame = new keyFrame(fox); 
     addFrame(frame);
 
-    //$("#foxScale").attr("disabled", true);
-    
     render();
 }
 
+//Selected Inbetweener Frame
 var f = 1;
 
+//Bool to indicate whether animation is playing or not
 var play = false;
+//Bool to indicate whether animation should be rewinded or not
 var rewindToStart = true;
+//Constant to specify the number of frames used to interpolated between Keyframes
 var INBETWEENER_COUNT = 30;
 var typeAnimation = 0; //0 , 1: from load
+
+/*Render simply calls the related functions for the animation display
+* If it's being played calls PlayAnimation
+*If not just updates and displays the model*/ 
 function render()
 {
     if(play){
@@ -632,59 +677,79 @@ function toggleAnimation(){
         document.getElementById("play_button").value= "Play";     
     }
 }
-
-
-
+/*
+*playAnimation(typeAnimation)
+*
+*Description: Plays animation using traverseModel(model) of model.js and  
+*easyInOut() of frame.js. This function is called from render()
+*typeAnimation: indicates whether frames are loaded or pushed on the run.
+*/
 function playAnimation(typeAnimation){
     if(typeAnimation === 0){
+        //Rewinds the model to the start
         if(rewindToStart){
             for(i = 0; i < fox.limbs.length; i++)
             {
+                //sets the rotation of all limbs to 0 
                 fox.limbs[i].rotZ = 0;
             }
-            //fox.root.transform = new  mat4();
+            //resets all the root components used transformations
             fox.root.posX = 0;
             fox.root.posY = 0;
             fox.root.scaX = 1;
             fox.root.scaY = 1;
 
+            //Interpolates current model to first Key frame that is pushed in the init()
             var curmodel = new keyFrame(fox);
             easeInOut(fox, curmodel, keyFrames[index], 1, 1);
 
+            //Loads the transforms from specified index to the fox
             for(i = 0; i < fox.limbs.length; i++)
             {
                 fox.limbs[i].transform = keyFrames[index].model.limbs[i].transform;
             }
             fox.root.transform = keyFrames[index].model.root.transform;
-                
-            //traverseModel(fox.root);
+            
+            //Makes sure rewind doesnt happen during the play through
             rewindToStart = false;
         }
+        //Indicates the end of a inderpolation between 2 Keyframes
         if(f > INBETWEENER_COUNT && index < keyFrames.length-2)
         {
+            //Increments index of the Selected Key frames
             index++;
+            //used for progressbar display
             selectedFrame = index;
+            //resets the selected inbetweener frame
             f=1;
         }
 
+        //indicates the interpolation between to keyframes
         else if(f <= INBETWEENER_COUNT)
         {
+            /*The initial frame is just a basys for all the transformations...
+            ... so it's not displayed and interpolated "off screen"
+            The remaining frames that are pushed by the user are displayed.*/
             if(index < 1)
             {
+                //Quick and non visible interpolation using 1 in betweener frame
                 easeInOut(fox, keyFrames[index], keyFrames[index+1], 1, 1);
                 f = INBETWEENER_COUNT +1;
                 traverseModel(fox.root);
             }
             else
             {
-
+                //User's frames are displayed and interpolated.
                 easeInOut(fox, keyFrames[index], keyFrames[index+1], f, INBETWEENER_COUNT);
                 f++;
                 traverseModel(fox.root);
             }
         }
+        //indicates the end of the animation
         else {
+            //toggles Animation 
             toggleAnimation();
+            //Resets the transforms
             for(i = 0; i < fox.limbs.length; i++)
             {
                 fox.limbs[i].transform = new mat4();
@@ -692,9 +757,11 @@ function playAnimation(typeAnimation){
             fox.root.transform = new mat4();
             traverseModel(fox.root);
 
+            //Displays the last frame that is not pushed to the animation but can be by the user
             displayFrame(keyFrames.length);
         }
     }
+    //Similar process is repeated for the loaded frames
     else if(typeAnimation === 1){
         if(rewindToStart){
             for(i = 0; i < fox.limbs.length; i++)
@@ -749,12 +816,22 @@ function playAnimation(typeAnimation){
     }
 }
 
+/*
+*updateProg()
+*
+*Description:Updates the HMTL progress bar and frame counter. 
+*/
 function updateProg()
 {
     document.getElementById("frame_counter").innerHTML =  (selectedFrame ) + " / " + (keyFrames.length -1 );
     document.getElementById("anim_bar").style.width = ((selectedFrame -1 + ((f-1)/ INBETWEENER_COUNT))/(keyFrames.length -1) * 100) + '%';
 }
 
+/*
+* addFrame()
+*
+*Description: Adds a new frame to the end of the animation or updates a frame which is already added.
+*/
 function addFrame(){
 
     var frame = new keyFrame(copyModel(fox));
@@ -773,6 +850,11 @@ function addFrame(){
     updateProg();
 }
 
+/*
+*displayFrame(index)
+*
+*Description: Displays the selected Key frame using easyInOut() from frame.js
+*/
 function displayFrame(index)
 {
     if(index < keyFrames.length && index >= 1)
@@ -893,18 +975,16 @@ function loadAnimation(){
         var i;
         var str = "keyframe";
         var key = "";
-        //RESET OR ADD TO THE REST???
+        //RESET OR ADD TO THE REST
         keyFrames = [];
         
         
         
         for(i = 0; i < contentToJSON.length; i++){
             key = str + i;
-            //console.log("aaaaaa");
             console.log(contentToJSON[i][key]);
             var model = contentToJSON[i][key];
             keyFrames.push(model);
-            //keyFrames[keyFrames.length-1].model.root.transform = fox.root.transform;
         }
     }  
 }
